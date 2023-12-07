@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+
+<!-- 빈생성 --><!--
+<bean id="myChef" class="sample.less01.Chef" />
+-->
+
+<!-- 빈생성: Setter를 이용해서 필드에 값을 대입--><!-- 
+<bean id="yourChef" class="sample.less01.Chef">
+	<property name="cname" value="이순신"/>
+	<property name="cid">
+		<value>슈퍼맨</value>
+	</property>
+</bean> -->
+
+<!-- 빈생성: 필드초기화 생성자를 통해서 필드에 값을 설정 --><!-- 
+<bean id="hisChef" class="sample.less01.Chef">
+	<constructor-arg value="홍길동" />
+	<constructor-arg value="12345"/>
+</bean>  -->
+
+<!-- bean 태그 대신 스프링의 설정과 어노테이션을 통한 bean 생성 -->
+<context:component-scan base-package="sample.less01"/>
+
+<!-- 위에 설정된 패키지에 있는 클래스에 다음의 어노테이션 중 하나가 명시되면
+	 자동으로 빈이 생성됩니다.
+	@Controller: 스프링 MVC 아키텍처의 웹 애플리케이션에 컨트롤러 역할을 하는 빈
+	@Service   : 스프링 MVC 아키텍처의 웹 애플리케이션에 서비스 역할을 하는 빈
+	@Repository: 스프링 MVC 아키텍처의 웹 애플리케이션에 DAO 역할을 하는 빈
+	@Component : 스프링 MVC 아키텍처의 웹 애플리케이션에 위의 것을 제외한 나머지 빈
+	 
+ -->
+
+<!-- 동일한 클래스에 대해서 bean 태그를 이용한 객체생성과 이 방법을 동시에 사용하면 오류가 발생됨  -->
+
+<!-- 의존성 주입: Dependency Injection, DI -->
+<!-- Restaurant 클래스에 Chef 타입의 필드가 있음 -->
+<!-- Restaurant 클래스가 Chef 클래스를 가지고 있다, has-a 관계 -->
+<!-- Restaurant 클래스가 Chef 클래스에 의존함 -->
+<!-- Restaurant.chef 필드에 Chef 객체가 대입 -->
+<!-- 의존성 주입은 Restaurant 클래스의 객체가 Chef 객체를 chef 필드에 주입받음 -->
+<!-- 생성자를 통한 의존성 주입 -->
+
+<bean id="yourChef" class="sample.less01.Chef">
+	<property name="cname" value="이순신"/>
+	<property name="cid">
+		<value>슈퍼맨</value>
+	</property>
+</bean>
+
+<!-- Setter를 이용한 의존성 주입 -->
+<bean id="myRestaurant" class="sample.less01.Restaurant"><!-- 
+	<property name="name" value="베트맨"/> -->
+	<property name="chef" ref="yourChef"/>
+</bean>
+
+<!-- 생성자를 이용한 의존성 주입 -->
+<bean id="yourRestaurant" class="sample.less01.Restaurant">
+	<constructor-arg  value="신상현" index="0"/> 
+	<constructor-arg  ref="yourChef" index="1"/>
+</bean>
+
+
+
+</beans>

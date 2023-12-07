@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+   xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+<!-- 1. Connection Pool 관련 Bean 구성: HikariCP -->
+
+<!-- 방법1: JDBC 정보를 직접 설정 -->
+<!-- 1-1. JDBC 설정 정보가 설정된 HikariConfig 빈 생성-->
+   <!-- <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+      <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+      <property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+      <property name="username" value="book_ex"/>
+      <property name="password" value="book_ex"/>
+   </bean> -->
+   
+<!-- 방법2: JDBC 정보를 가진 properties 파일을 이용 -->
+<!-- 2-1. properties 파일에 대한 통로를 설정-->
+   <context:property-placeholder location="classpath:properties/jdbc/myjdbc.properties"/>
+   
+<!-- 2-2. JDBC 설정 정ㅂ과 설정된 HikariConfig 빈 생성: properties 파일 내용을 읽어들여서-->
+   <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+      <property name="driverClassName" value="${jdbcHikari.driverClassName}"/>
+      <property name="jdbcUrl" value="${jdbcHikari.jdbcUrl}"/>
+      <property name="username" value="${jdbcHikari.username}"/>
+      <property name="password" value="${jdbcHikari.password}"/>
+   </bean>
+
+<!-- HikariDataSource 클래스를 이용한 dataSource 빈 생성: JDBC 설정이 저장된 HikariConfig 빈 주입받음 -->
+   <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+      <constructor-arg ref="hikariConfig"/>
+   </bean>
+
+
+<!-- 3. mybatis-spring 연동구성(dataSource 빈을 주입받음) -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="dataSource" ref="dataSource"></property>
+   </bean>
+   
+<!-- 4. mybatis-spring 연동 (SqlSessionFactoryBean 빈 주입 받음) -->
+<!-- SqlSessionFactory 보다 쓰레드에 안전 -->   
+   <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+      <constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
+   </bean>
+   
+<!-- 5. mybatis Mapper 파일을 엑세스하는 인터페이스의 위치를 설정 -->
+   <mybatis-spring:scan base-package="com.spring5.mypro00.mapper" factory-ref="sqlSessionFactory"/>
+   <!-- <mybatis-spring:scan base-package="com.spring5.mypro00.mapper" factory-ref="sqlSession"/> -->
+</beans>
