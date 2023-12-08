@@ -131,6 +131,7 @@ public class MyReplyController {
 				: new ResponseEntity<String>("failed", HttpStatus.INTERNAL_SERVER_ERROR) ;
 	}
 	
+	
 //	특정 게시물에 대한 모든 댓글 삭제: 삭제 행수가 반환됨
 	@DeleteMapping(value = "/{bno}", produces = "text/plain;charset=utf-8")
 	public ResponseEntity<String> removeAllReply(@PathVariable("bno")Long bno){

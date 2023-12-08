@@ -115,7 +115,7 @@
 					<td>${myboard.bwriter }</td>
 					<td class="center"><fmt:formatDate value="${myboard.bregDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
 					<td class="center"><fmt:formatDate value="${myboard.bmodDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
-					<td class="center"><c:out value="${myboard.bviewsCnt }"/></td>
+					<td class="center"><c:out value="${myboard.bviewCnt }"/></td>
 		 		</tr>
 			</c:otherwise>		
 		</c:choose>			

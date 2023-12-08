@@ -25,7 +25,7 @@ public class MyBoardVO {
 	private String bwriter ;
 	private Date bregDate ;
 	private Timestamp bmodDate;
-	private int bviewsCnt;
+	private int bviewCnt;
 	private int breplyCnt;
 	private int bdelFlag; //0: 유지, 1: 삭제요청됨
 

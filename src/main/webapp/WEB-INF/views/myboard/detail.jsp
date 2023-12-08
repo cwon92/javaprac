@@ -5,9 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>   
 
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
-
 <%@include file="../myinclude/myheader.jsp" %>
-
 <style>
 /*th {text-align: center;}*/
 </style>
@@ -15,29 +13,60 @@
 <div id="page-wrapper"> 
     <div class="row">
         <div class="col-lg-12">
-            <h3 class="page-header">Board - Detail</h3>
+         <h3 class="page-header"
+            style="white-space: nowrap;" >Board - Detail
+            <small>
+            	&nbsp;&nbsp;&nbsp;<c:out value="${myboard.bno}"/>번 게시물
+            </small>
+         </h3>        
         </div>
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default">
-            
-                <div class="panel-heading"><h4>게시물 상세 </h4></div>
+        
+            <div class="panel panel-default"> 
+            	<div class="panel-heading">
+                   <div class="row">
+	                  <div class="col-md-2" style="white-space: nowrap; height: 45px; padding-top:11px;">
+	                     <strong style="font-size:16px;">${myboard.bwriter}님 작성</strong>
+	                  </div>
+	                  <div class="col-md-3" style="white-space: nowrap; height: 45px; padding-top:16px;">
+	                     <span class="text-primary" style="font-size: smaller; height: 45px; padding-top: 19px;">
+	                        <span>
+	                           <span>등록일:&nbsp;</span>
+	                           <strong><fmt:formatDate 
+	                                    pattern="yyyy-MM-dd HH:mm:ss"
+	                                    value="${myboard.bregDate}"
+	                                  /></strong>
+	                           <span>&nbsp;&nbsp;</span>
+	                        </span>
+	                        <span>조회수:&nbsp;<strong><c:out value="${myboard.bviewCnt}"/></strong>
+	                        </span>
+	                     </span>
+	                  </div>
+	                  <div class="col-md-7" style="height: 45px; padding-top:6px;"><%-- vertical-align: middle; --%>
+	                     <div class="button-group pull-right">
+	                     
+	
+	
+	
+	                     <button type="button" id="btnToModify" data-oper="modify"
+	                           class="btn btn-primary"><span>수정페이지로 이동</span></button>
+	
+	
+	                           
+	                     <button type="button" id="btnToList" data-oper="list"
+	                           class="btn btn-warning"><span>목록페이지로 이동</span></button>
+	                     </div>
+	                  </div>
+	               </div>
+	                </div>         		
                 <!-- /.panel-heading -->
                              
                 <div class="panel-body">
 
-<%-- <form role="form" action="${contextPath }/myboard/register" 
-      method="post" name="frmBoard" id="frmBoard"> --%>
-      
-
-	<div class="form-group">
-	    <label>글번호</label>
-	    <input class="form-control" name="bno" id="bno"
-	           value='<c:out value="${myboard.bno }"/>' readonly="readonly" />
-	</div>
 	<div class="form-group">
 	    <label>글제목</label>
 	    <input class="form-control" name="btitle" id="btitle"
@@ -48,19 +77,12 @@
 	    <textarea class="form-control" rows="3" name="bcontent" id="bcontent" 
 	              readonly="readonly">${myboard.bcontent}</textarea>
     </div>
-    <div class="form-group">
-	    <label>작성자</label>
-	    <input class="form-control" name="bwriter" id="bwriter" 
-	           value="${myboard.bwriter }" readonly="readonly" />
-	</div>
+
 	    <div class="form-group">
-	    <label>최종수정일</label> [등록일시: <fmt:formatDate pattern="yyyy/MM/dd HH:mm:ss" value="${myboard.bmodDate}"/>]
+	    <label>최종수정일</label>
 	   	<input class="form-control" name="bmodDate" id="bmodDate" 
 	           value='<fmt:formatDate pattern="yyyy/MM/dd HH:mm:ss" value="${myboard.bmodDate }"/>' readonly="readonly" />
-			
 	</div> 
-	<button type="button" class="btn btn-primary" id="btnToModify">수정페이지로 이동</button>
-	<button type="button" class="btn btn-warning" id="btnToList">목록페이지로 이동</button>
 
 
 	<form id="frmSendValue"><!-- 
@@ -143,7 +165,28 @@ function runModal(result) {
 	
 	myMsg = "" ;
 }
+</script>
+<script src="${contextPath }/resources/js/mycomment.js"></script>
+<script>
 
+var bnoValue = '<c:out value="${myboard.bno}"/>' ;
+
+//댓글 목록 호출
+myReplyClsr.getCmtList(
+		{bno: bnoValue} ,
+		function(myReplyPagingCreator){
+			console.log(myReplyPagingCreator.replyTotCnt);
+			for(var reply of myReplyPagingCreator.myreplyList){
+				console.log(reply);
+				console.log(reply.rregDate);
+			}
+		}
+			
+);
+
+</script>
+
+<script>
 $(document).ready(function(){
 	runModal(result) ;
 });

@@ -107,7 +107,7 @@ public class MyBoardServiceImpl implements MyBoardService {
 		
 		MyBoardVO myBoard = myBoardMapper.selectMyBoard(bno);
 		System.out.println("myBoard" + myBoard);
-		System.out.println("조회수: " + myBoard.getBviewsCnt());
+		System.out.println("조회수: " + myBoard.getBviewCnt());
 		
 //		if (rows == 1) {
 //			return myBoard;
