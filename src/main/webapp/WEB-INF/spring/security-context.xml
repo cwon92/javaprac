@@ -13,17 +13,31 @@
 	<bean id="myMemberUserDetailsServiceImpl" 
 		  class="com.spring5.mypro00.common.security.MyMemberUserDetailsServiceImpl"/>
 	
+	<!-- 로그인 성공 시의 처리 로직이 정의된 클래스의 빈 등록 -->
+	<bean id="myLoginSucessHandler2" class="com.spring5.mypro00.common.security.MyLoginSucessHandler2"/>
+	
+	<!-- 시큐리티 기능 구현 -->
 	<security:http>
 		<!-- <security:csrf /> -->
 		<security:intercept-url pattern="/" access="permitAll"/>
-		<security:intercept-url pattern="/myboard/list" access="hasAnyAuthority('ROLE_USER','ROLE_MEMBER','ROLE_MANAGER','ROLE_ADMIN')"/>
-		<security:intercept-url pattern="/myboard/register" method="GET" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/myboard/list" access="hasAnyAuthority('ROLE_USER','ROLE_MEMBER')"/>
+		<security:intercept-url pattern="/myboard/register" method="GET" access="hasAnyAuthority('ADMIN','ROLE_MEMBER')"/>
 		<security:intercept-url pattern="/myboard/register" method="POST" access="isAuthenticated()"/>
 		
 		<security:form-login login-page="/myLogin" 
 							 login-processing-url="/myLoginProcess" 
-							 default-target-url="/myboard/list"/>
-		<security:logout/>
+							 default-target-url="/myboard/detail?bno=1"
+							 authentication-success-handler-ref="myLoginSucessHandler2"/>
+							 <!-- username-parameter, password-parameter attribute로 login.jsp의 input name과 링크해서 이름변경 가능
+							 		dafault 는 username, password 이다. -->
+		<security:logout logout-url="/myLogoutProcess"/>
+		
+		<!-- 스프링 시큐리티 자동로그인: 1주일 유지 (DB에 저장시키는 방법) -->
+		<!-- Referenced bean 'dataSource' not found 경고는 무시(mybatis-context.xml에 정의되어 있음) -->
+		<!-- 아래의 태그는 mybatis-contextDEV.xml 에서 dataSource 빈 생성할 때의 id를 넣는다는 의미 604800은 1주일을 초로 나타냄 -->
+		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
+		<!-- remember-me-parameter attribute 로 remember-me input name 을 서로 싱크할 수 있다.-->
+		
 	</security:http>
 	
 	<security:authentication-manager>

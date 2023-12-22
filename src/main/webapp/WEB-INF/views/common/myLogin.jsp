@@ -65,7 +65,10 @@
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input name="myRememberMe" type="checkbox" >자동로그인(Remember Me)
+                                    	<!-- remember-me input에 value 속성을 설정하면 
+                                    			spring security의 remember-me 기능이 동작하지 않음 -->
+                                        <!-- <input name="myRememberMe" type="checkbox" >자동로그인(Remember Me) -->
+                                        <input name="remember-me" type="checkbox" >자동로그인(Remember Me)
                                     </label>
                                 </div>
                                 <div>

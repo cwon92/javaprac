@@ -27,7 +27,7 @@ public class MyLoginLogoutSendPageController {
 		return "common/myLogin" ; 
 	}
 	
-	@GetMapping("/logout")
+	@GetMapping("/myLogout")
 	public String sendLogoutPage() {
 		
 		return "common/myLogout";
