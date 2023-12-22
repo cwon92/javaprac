@@ -16,6 +16,9 @@
 	<!-- 로그인 성공 시의 처리 로직이 정의된 클래스의 빈 등록 -->
 	<bean id="myLoginSucessHandler2" class="com.spring5.mypro00.common.security.MyLoginSucessHandler2"/>
 	
+	
+	<bean id="myAccessDeniedHandlerImpl" class="com.spring5.mypro00.common.security.MyAccessDeniedHandlerImpl"/>
+	
 	<!-- 시큐리티 기능 구현 -->
 	<security:http>
 		<!-- <security:csrf /> -->
@@ -26,10 +29,11 @@
 		
 		<security:form-login login-page="/myLogin" 
 							 login-processing-url="/myLoginProcess" 
-							 default-target-url="/myboard/detail?bno=1"
+							 default-target-url="/myboard/detail?bno=1" 
 							 authentication-success-handler-ref="myLoginSucessHandler2"/>
 							 <!-- username-parameter, password-parameter attribute로 login.jsp의 input name과 링크해서 이름변경 가능
-							 		dafault 는 username, password 이다. -->
+							 		dafault 는 username, password 이다. 
+							 	 위의 default-target-url는 지금 안읽힘-->
 		<security:logout logout-url="/myLogoutProcess"/>
 		
 		<!-- 스프링 시큐리티 자동로그인: 1주일 유지 (DB에 저장시키는 방법) -->
@@ -37,6 +41,11 @@
 		<!-- 아래의 태그는 mybatis-contextDEV.xml 에서 dataSource 빈 생성할 때의 id를 넣는다는 의미 604800은 1주일을 초로 나타냄 -->
 		<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800"/>
 		<!-- remember-me-parameter attribute 로 remember-me input name 을 서로 싱크할 수 있다.-->
+		
+		<!-- 접근 제한 (Forbidden 403 오류) 처리 -->
+		<!-- error-page 와 ref 는 같이 쓸 수 없음 오류남 ref는 만들어야 하는게 많네 하기 싫다-->
+		<security:access-denied-handler error-page="/accessForbiddenError"/>
+		<!-- <security:access-denied-handler	ref="myAccessDeniedHandlerImpl"/> -->
 		
 	</security:http>
 	
