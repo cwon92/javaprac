@@ -3,59 +3,52 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring5.mypro00.mapper.MyMemberMapper">
-
-
-	<resultMap type="com.spring5.mypro00.domain.MyAuthorityVO" id="authMap">
-		<result property="userId" column="userid"/>
-		<result property="authority" column="authority"/>
-	</resultMap>
-	<resultMap type="com.spring5.mypro00.domain.MyMemberVO" id="memberMap">
-		<result property="userId" column="userid"/>
-		<result property="userPw" column="userpw"/>
-		<result property="userName" column="userName"/>
-		<result property="mregDate" column="mregDate"/>
-		<result property="mmodDate" column="mmodDate"/>
-		<result property="mdropFlag" column="mdropFlag"/>
-		<result property="enabled" column="enabled"/>
-		<collection property="authorityList" resultMap="authMap"/>
-	</resultMap>
-	
+ 	
+ 	<resultMap type="com.spring5.mypro00.domain.MyAuthorityVO" id="authoMap">
+ 		<result property="userId" column="userid"/>
+ 		<result property="authority" column="authority"/>
+ 	</resultMap>
+ 	
+ 	<resultMap type="com.spring5.mypro00.domain.MyMemberVO" id="memberMap">
+ 		<result property="userId" column="userid"/>
+ 		<result property="userPw" column="userPw"/>
+ 		<result property="userName" column="userName"/>
+ 		<result property="mregDate" column="mregDate"/>
+ 		<result property="mmodDate" column="mmodDate"/>
+ 		<result property="mdropFlag" column="mdropFlag"/>
+ 		<result property="enabled" column="enabled"/>
+ 		<collection property="authorityList" resultMap="authoMap"/>
+ 	</resultMap>
+ 	
+ 	
 <!-- 특정 회원 조회(스프링 시큐리티도 사용함) -->
 	<select id="selectMyMember" resultMap="memberMap">
-		SELECT mem.userid, mem.userpw, mem.username,
-				mem.mregdate, mem.mmoddate, mem.mdropflag, mem.enabled, auth.authority
-		FROM book_ex.tbl_mymember mem LEFT OUTER JOIN book_ex.tbl_mymember_authority auth ON mem.userid = auth.userid
-		WHERE mem.userid = #{userid}
+		SELECT mem.userid, mem.userpw, mem.username, mem.enabled,
+			   mem.mregdate, mem.mmoddate, mem.mdropflag, auth.authority
+		FROM book_ex.tbl_mymember mem LEFT OUTER JOIN book_ex.tbl_mymember_authority auth 
+			ON mem.userid = auth.userid
+		WHERE mem.userid = #{userId}
 	</select>
-	
-<!-- 회원 등록: 회원 등록 시 회원 권한 추가도 같이 수행하는 것을 권장 -->	
+ 	
+<!-- 회원 등록: 회원 등록 시 회원 권한 추가도 같이 수행하는 것을 권장 --> 
 	<insert id="insertMyMember" parameterType="com.spring5.mypro00.domain.MyMemberVO">
 		INSERT INTO book_ex.tbl_mymember
-		VALUES (#{userid}, #{userpw}, #{userName}, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+		VALUES (#{userId}, #{userPw}, #{userName}, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
 	</insert>
-	
+ 	
 <!-- 회원 권한 추가 -->
 	<insert id="insertMyMemAuthority">
 		INSERT INTO book_ex.tbl_mymember_authority
-		VALUES (#{userid}, #{authority})
+		VALUES (#{userId}, #{authority})
 	</insert>
-	
-<!-- 회원 탈퇴(회원 삭제) -> mdropFlag를 1로 업데이트-->
+	 
+<!-- 회원 탈퇴(호원삭제 -> mdropFlag를 1로 업데이트 -->	 
 	<update id="updateMdropFlag" parameterType="String">
 		UPDATE book_ex.tbl_myMember
 		SET mdropFlag = 1
 		WHERE userId = #{userId}
-	</update>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	</update>	 
+	 
+	 
+
 </mapper>

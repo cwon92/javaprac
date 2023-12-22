@@ -10,24 +10,22 @@
 		FROM book_ex.tbl_myAttachFiles
 		WHERE bno = #{bno}
 	</select>
-	
-<!--첨부파일 추가 -->
+
+<!-- 첨부파일 추가 -->
 	<insert id="insertAttachFile">
-		INSERT INTO book_ex.tbl_myAttachFiles
+		INSERT INTO book_ex.tbl_myattachFiles
 		VALUES (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{bno})
 	</insert>
-
-<!--특정 첨부파일 삭제 -->
+	
+<!-- 특정 첨부파일 삭제 -->
 	<delete id="deleteAttachFile">
 		DELETE FROM book_ex.tbl_myAttachFiles
-		WHERE uuid = #{uuid}
+		WHERE uuid = #{uuid} 
 	</delete>
-
+	
 <!-- 특정 게시물의 모든 첨부파일 삭제 -->
 	<delete id="deleteAttachFiles">
-		DELETE FROM book_ex.tbl_myAttachFiles
+		DELETE book_ex.tbl_myAttachFiles
 		WHERE bno = #{bno}
 	</delete>
-
-
 </mapper>

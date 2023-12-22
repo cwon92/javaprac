@@ -31,9 +31,9 @@ public interface MyBoardService {
 	//특정 게시물 삭제요청(UPDATE)
 	public boolean modifyBdelFlag(long bno) ;
 	
-	//특정 게시물의 첨부파일 목록조회
-	public List<MyBoardAttachFileVO> getAttachFileList (Long bno);
+	//특정 게시물의 첨부파일 목록 조회
+	public List<MyBoardAttachFileVO> getAttachFileList(Long bno);
 	
-	//특정 게시물의 서버 업로드 파일 삭제
-	//public void removeAttachFiles(List<MyBoardAttachFileVO> attachFileList);
+
+
 }

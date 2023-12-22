@@ -8,8 +8,10 @@ var myReplyClsr = (function(){
 	//댓글 목록(페이징) - ajax() 함수 사용
     function getCmtList(myParam, callback, error) {
         var bno = myParam.bno ;
-        //var pageNum = (myParam.pageNum != null)? myParam.pageNum:1
-        var pageNum = myParam.pageNum || 1 ;
+        var pageNum = (myParam.pageNum != null)? myParam.pageNum:1
+        //var pageNum = myParam.pageNum || 1 ;
+        console.log("getCmtList()가 전달받은 bno: " + bno) ;
+        console.log("getCmtList()가 전달받은 pageNum: " + pageNum) ;
 
         //댓글 목록 조회 컨트롤러의 매핑 URL: GET /replies/{bno}/page/{pageNum}
         //$.ajax() 함수는, 자바스크립트 객체를 매개값으로 받아 처리
@@ -188,7 +190,7 @@ var myReplyClsr = (function(){
     function myDateTimeFmt(datetimeValue) {
         
         var myDate = new Date(datetimeValue) ;
-        console.log("myDate: " + myDate) ;
+//        console.log("myDate: " + myDate) ;
 
         var myDateTime = "" ;
 
@@ -209,7 +211,7 @@ var myReplyClsr = (function(){
 
     } //myDateTimeFmt-end
 
-    return {
+    return {//myReplyClsr
         getCmtList: getCmtList ,
         registerCmt: registerCmt ,
         registerReply: registerReply ,

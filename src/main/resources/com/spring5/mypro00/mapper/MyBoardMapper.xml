@@ -161,8 +161,8 @@
 		]]>
 
 		<choose>
-			<when test="(beginDate != null and beginDate != '') and (endDate != null and endDate != '')">
-			 	bregDate BETWEEN TO_DATE(#{beginDate}, 'YYYY-MM-DD')
+			<when test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+			 	bregDate BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD')
 			 				 AND TO_DATE(#{endDate}, 'YYYY-MM-DD') AND
 			</when>
 		</choose>
@@ -203,8 +203,8 @@
 				</foreach>
 			</trim>
 			<choose>
-				<when test="(beginDate != null and beginDate != '') and (endDate != null and endDate != '')">
-					AND bregDate BETWEEN TO_DATE(#{beginDate}, 'YYYY-MM-DD')
+				<when test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+					AND bregDate BETWEEN TO_DATE(#{startDate}, 'YYYY-MM-DD')
 				 		 		     AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
 				</when>
 			</choose>	 
@@ -213,6 +213,16 @@
 					
 
 <!-- 게시물 등록(CREATE) -->
+<!-- selectkey 이용않함 --><!-- 
+	<insert id="insertMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO">
+		INSERT INTO book_ex.tbl_myboard
+		VALUES (book_ex.seq_myboard.nextval,
+        		#{btitle},
+        		#{bcontent},
+        		#{bwriter},
+        		DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+	</insert> -->
+
 	<insert id="insertMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO">
 		<selectKey order="BEFORE" keyProperty="bno" resultType="long">
 			SELECT book_ex.seq_myboard.nextval FROM dual
@@ -225,21 +235,14 @@
         		DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
 	</insert>	
 
-<!-- 특정 게시물 조회(modify.jsp): jsp로 board 정보 표시 후 ajax로 첨부파일 정보 표시-->
+<!-- 특정 게시물 조회(modify.jsp): jsp로 board정보 표시 후, ajax로 첨부파일 정보 표시 -->	
 	<select id="selectMyBoard2" resultType="com.spring5.mypro00.domain.MyBoardVO">
 		SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelFlag
 		FROM book_ex.tbl_myboard
 		WHERE bno = #{bno}
 	</select>
-	
-<!-- 특정 게시물 조회(detail.jsp): OUTER JOIN 사용(첨부파일 처리 후)-->
-	<select id="selectMyBoard" resultMap="myboardMap">
-		SELECT a.bno, a.btitle, a.bcontent, a.bwriter, a.bregDate, a.bmodDate, a.bviewCnt, a.breplyCnt, a.bdelFlag,
-		    b.uuid, b.uploadPath, b.fileName, b.fileType, b.bno AS mybno
-		FROM book_ex.tbl_myboard a LEFT OUTER JOIN book_ex.tbl_myAttachFiles b on (a.bno = b.bno)
-		WHERE a.bno = #{bno}
-	</select> 
-	
+
+<!-- 특정 게시물 조회(detail.jsp): OUTER JOIN 사용 -->
 	<resultMap type="com.spring5.mypro00.domain.MyBoardAttachFileVO" id="attachFileMap">
 		<result property="uuid" column="uuid"/>
 		<result property="uploadPath" column="uploadPath"/>
@@ -258,13 +261,16 @@
 		<result property="bviewCnt" column="bviewCnt"/>
 		<result property="breplyCnt" column="breplyCnt"/>
 		<result property="bdelFlag" column="bdelFlag"/>
-		<collection property="attachFileList" resultMap="attachFileMap"/>
+		<collection property="attachFileList" resultMap="attachFileMap" />
 	</resultMap>
 	
-		
-
-	
-
+	<select id="selectMyBoard" resultMap="myboardMap">
+		SELECT a.bno, a.btitle, a.bcontent, a.bwriter, 
+			   a.bregdate, a.bmoddate, a.bviewcnt, a.breplycnt, a.bdelflag, 
+			   b.uuid, b.uploadpath, b.filename, b.filetype, b.bno AS mybno
+		FROM book_ex.tbl_myboard a LEFT OUTER JOIN book_ex.tbl_myattachfiles b on (a.bno = b.bno)
+		WHERE a.bno = #{bno}
+	</select>
 
 <!-- 게시물 조회수 증가(+1씩 증가) -->
 	<update id="updateBviewCnt">
@@ -295,11 +301,18 @@
 		WHERE bno = #{bno}
 	</update>
 
-<!-- 게시물의 댓글 개수 수정: 댓글추가 시에 #{amount}에 1, 댓글삭제 시 #{amount}에 -1 이 각각 전달됨 -->
+
+<!-- 게시물 댓글 수 증가 -->
 	<update id="updateBreplyCnt">
-		update book_ex.tbl_myboard
-		set breplyCnt = breplyCnt + #{amount}
-		where bno = #{bno}
-	</update>
+		UPDATE book_ex.tbl_myboard
+		SET breplyCnt = breplyCnt - 1
+		WHERE bno = #{bno} 
+	</update> 	
+ 	
+ 	
+ 	
+ 	<select id="selectSysdate" resultType="java.util.Date">
+ 		select sysdate from dual
+ 	</select>
 
 </mapper>

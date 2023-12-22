@@ -12,13 +12,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttachFileDTO {
-
-	private String fileName ; // 원본 파일 이름
-	private String uploadPath ; // 업로드 된 파일의 경로 (yyyy/MM/dd)
-	private String uuid ; // 파일이름에 추가된 UUID.tostring() 값
-	private String fileType ; // "I":이미지 파일, "F":그 외
-	private String repoPath = "C:/myupload"; //
 	
-	
+	private String fileName ; 	//원본파일 이름 저장
+	private String uploadPath ; //업로드 경로
+	private String uuid;		//파일 이름에 추가된 UUID.toString()값
+	private String fileType;	//"I": 이미지파일, "F" 이미지가 아닌 파일
+	private String repoPath = "C:/myupload";
 	
 }

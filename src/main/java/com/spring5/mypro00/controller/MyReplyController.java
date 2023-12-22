@@ -33,7 +33,7 @@ public class MyReplyController {
 	@GetMapping( value="/{bno}/page/{pageNum}" ,
 			     produces = {"application/json;charset=utf-8" , 
 			    			 "application/xml;charset=utf-8"  }
-				) //produces: 브라우저로 보내는 데이터 형식을 설정합니다.  
+				) //produces: 브라우저로 보내는 데이터 형식을 설정합니다.
 	public ResponseEntity<MyReplyPagingCreatorDTO> 
 				showReplyList(	@PathVariable("bno") long bno,
 								@PathVariable("pageNum") Integer pageNum ){
@@ -55,15 +55,17 @@ public class MyReplyController {
 				 produces = {"text/plain; charset=utf-8"} )		//produces:메서드--> 브라우저로 보내는 데이터 유형
 	public ResponseEntity<String> registerReplyForBoard(@PathVariable("bno") long bno ,
 														@RequestBody MyReplyVO myreply) {
-												//데이터만 보내주는 전송방식에서 consumes 로 온 json을 자동으로 걸러서 myReplyVO 에 넣어줌. 아주 편리
 		Long registeredRno = myReplyService.registerReplyForBoard(myreply);
 		String _registeredRno = null ;
 		
 		if (registeredRno != null) {
 			_registeredRno = String.valueOf(registeredRno) ;
+			
 		} else {
 			_registeredRno = String.valueOf(registeredRno) ;
 		}
+		
+		System.out.println("_registeredRno: " + _registeredRno);
 		
 		return registeredRno != null ? new ResponseEntity<String>(_registeredRno, HttpStatus.OK) 
 									 : new ResponseEntity<String>(_registeredRno, HttpStatus.INTERNAL_SERVER_ERROR);

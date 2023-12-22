@@ -70,7 +70,7 @@ public class MyBoardServiceImpl2 implements MyBoardService {
 //		return pagingCreator;
 		//return myBoardMapper.selectMyBoardList() ;
 		
-		String beginDate = myboardPaging.getBeginDate() ;
+		String beginDate = myboardPaging.getStartDate() ;
 		String endDate = myboardPaging.getEndDate() ;
 		
 		System.out.println("beginDate: " + beginDate);

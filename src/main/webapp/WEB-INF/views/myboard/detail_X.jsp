@@ -1,266 +1,257 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<c:set var="contextPath" value="${pageContext.request.contextPath }"/>
+<c:set var="contextPath" value="${pageContext.request.contextPath }" />
 
 
-<%@include file="../myinclude/myheader.jsp" %>  
+<%@include file="../myinclude/myheader.jsp"%>
 
 <style>
- th {text-align: center;}
-</style>  
+th {text-align: center;}
+</style>
 
 <div id="page-wrapper">
-    <div class="row">
-        <div class="col-lg-12">
-            <h3 class="page-header"
-            style="white-space: nowrap;" >Board - Detail
-             <small>
-                &nbsp;&nbsp;&nbsp;<c:out value="${myboard.bno}"/>번 게시물
-             </small>
-         </h3>
-        </div><%-- /.col-lg-12 --%>
-    </div><%-- /.row --%>
-    <div class="row">
-        <div class="col-lg-12">
-        
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                   <div class="row">
-                  <div class="col-md-2" style="white-space: nowrap; height: 45px; padding-top:11px;">
-                     <strong style="font-size:16px;">${myboard.bwriter}님 작성</strong>
-                  </div>
-                  <div class="col-md-3" style="white-space: nowrap; height: 45px; padding-top:16px;">
-                     <span class="text-primary" style="font-size: smaller; height: 45px; padding-top: 19px;">
-                        <span>
-                           <span>등록일:&nbsp;</span>
-                           <strong><fmt:formatDate 
-                                    pattern="yyyy-MM-dd HH:mm:ss"
-                                    value="${myboard.bregDate}"
-                                  /></strong>
-                           <span>&nbsp;&nbsp;</span>
-                        </span>
-                        <span>조회수:&nbsp;<strong><c:out value="${myboard.bviewCnt}"/></strong>
-                        </span>
-                     </span>
-                  </div>
-                  <div class="col-md-7" style="height: 45px; padding-top:6px;"><%-- vertical-align: middle; --%>
-                     <div class="button-group pull-right">
-                     
+	<div class="row">
+		<div class="col-lg-12">
+			<h3 class="page-header" style="white-space: nowrap;">
+				Board - Detail <small> &nbsp;&nbsp;&nbsp;<c:out
+						value="${myboard.bno}" />번 게시물
+				</small>
+			</h3>
+		</div><%-- /.col-lg-12 --%>
+	</div><%-- /.row --%>
+	<div class="row">
+		<div class="col-lg-12">
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-2"
+							style="white-space: nowrap; height: 45px; padding-top: 11px;">
+							<strong style="font-size: 16px;">${myboard.bwriter}님 작성</strong>
+						</div>
+						<div class="col-md-3"
+							style="white-space: nowrap; height: 45px; padding-top: 16px;">
+							<span class="text-primary"
+								style="font-size: smaller; height: 45px; padding-top: 19px;">
+								<span> <span>등록일:&nbsp;</span> <strong><fmt:formatDate
+											pattern="yyyy-MM-dd HH:mm:ss" value="${myboard.bregDate}" /></strong>
+									<span>&nbsp;&nbsp;</span>
+							</span> <span>조회수:&nbsp;<strong><c:out
+											value="${myboard.bviewCnt}" /></strong>
+							</span>
+							</span>
+						</div>
+						<div class="col-md-7" style="height: 45px; padding-top: 6px;">
+							<%-- vertical-align: middle; --%>
+							<div class="button-group pull-right">
 
 
 
-                     <button type="button" id="btnToModify" data-oper="modify"
-                           class="btn btn-primary"><span>수정페이지로 이동</span></button>
+
+								<button type="button" id="btnToModify" data-oper="modify"
+									class="btn btn-primary">
+									<span>수정페이지로 이동</span>
+								</button>
 
 
-                           
-                     <button type="button" id="btnToList" data-oper="list"
-                           class="btn btn-warning"><span>목록페이지로 이동</span></button>
-                     </div>
-                  </div>
-               </div>
-                </div><!-- /.panel-heading --><%-- /.panel-heading --%>
-                
-                <div class="panel-body">
 
-   
-   <div class="form-group">
-       <label>글제목</label>
-       <input class="form-control" name="btitle" id="btitle" 
-             value="${myboard.btitle }" readonly="readonly">
-   </div>
-   <div class="form-group">
-       <label>글내용</label>
-       <textarea class="form-control" rows="3" name="bcontent" id="bcontent"
-               readonly="readonly">${myboard.bcontent}</textarea>
-   </div>
+								<button type="button" id="btnToList" data-oper="list"
+									class="btn btn-warning">
+									<span>목록페이지로 이동</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div><%-- /.panel-heading --%>
 
-   <div class="form-group">
-       <label>최종수정일</label>
-       <input class="form-control" name="bmodDate" id="bmodDate" 
-               value='<fmt:formatDate pattern="yyyy/MM/dd HH:mm:ss" value="${myboard.bmodDate }"/>' readonly="readonly">
-   </div>
-   
-<form id="frmSendValue">
-   <input type="hidden" name="pageNum" value="${myboardPaging.pageNum }" >
-   <input type="hidden" name="rowAmountPerPage" value="${myboardPaging.rowAmountPerPage }" >
-   <input type="hidden" name="scope" value="${myboardPaging.scope }" >
-   <input type="hidden" name="keyword" value="${myboardPaging.keyword }" >
-   <input type="hidden" name="endDate" value="${myboardPaging.endDate }" >
-</form>
-
-                </div><%-- /.panel-body --%>
-                
-            </div><%-- /.panel --%>
-        </div><%-- /.col-lg-12 --%>
-    </div><%-- /.row --%>
-
-<%-- 첨부파일 결과 표시 --%>    
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">첨부 파일</div><!-- /.panel-heading -->
-                <div class="panel-body"><!-- 
-                    <div class="form-group uploadDiv">
-                        <input id="inputFile" class="btn btn-primary inputFile" type="file" name="uploadFiles" multiple="multiple" /><br> 
-                    </div>-->
-                   <div class="form-group fileUploadResult">
-                       <ul>
-<%-- 업로드 후 처리결과가 표시될 영역 --%>
-<c:choose>
-<c:when test="${empty myboard.attachFileList }">
-   <li>첨부파일이 없습니다.</li>
-</c:when>
-<c:otherwise>
-   <c:forEach var="attachFile" items="${myboard.attachFileList}">
-      <c:choose>
-      <c:when test='${attachFile.fileType == "F"}'>
-      <li class="attachLi" 
-         data-repopath="${attachFile.repoPath}"
-         data-uploadpath="${attachFile.uploadPath}"
-          data-uuid="${attachFile.uuid}"
-          data-filename="${attachFile.fileName }"
-          data-filetype="F">
-              <img src='${contextPath}/resources/img/icon-attach.png' style='width:25px;'>
-              &nbsp;&nbsp; ${attachFile.fileName}
-          </a>
-      </li>
-      </c:when>
-      <c:otherwise>
-          <c:set var="thumbnail" value="${attachFile.repoPath}/${attachFile.uploadPath}/s_${attachFile.uuid}_${attachFile.fileName}"/>
-          <li class="attachLi" 
-             data-repopath="${attachFile.repoPath}"
-              data-uploadpath = "${attachFile.uploadPath }" 
-              data-uuid = "${attachFile.uuid }" 
-              data-filename = "${attachFile.fileName }" 
-              data-filetype = "I" >
-                  <img src='${contextPath}/displayThumbnail?fileName=${thumbnail}' style='width:25px;'>
-                  &nbsp;&nbsp;${attachFile.fileName}
-              </a> 
-          </li>
-          <c:remove var="thumbnail"/>
-      </c:otherwise>
-      </c:choose>
-   </c:forEach>
-</c:otherwise>
-</c:choose>
-                   </ul>
-               </div>
-            </div><!-- /.panel-body -->
-        </div><!-- /.panel -->
-    </div><!-- /.col-lg-12 -->
-</div><!-- /.row -->
-
-<%-- Modal:첨부파일 이미지 표시 --%>
-<div class="modal fade" id="attachModal" tabindex="-1" role="dialog" aria-labelledby="attachModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body" id="attachModal-body">
-               <%-- 이미지표시 --%>
-            </div>
-            
-        </div><%-- /.modal-content --%>
-    </div><%-- /.modal-dialog --%>
-</div><%-- /.modal --%>
+				<div class="panel-body">
 
 
-<div class="row">
-   <div class="col-lg-12">
-      <div class="panel panel-default" >
-         <div class="panel-heading">
-            <p style="margin-bottom: 0px; font-size: 16px;">
-               <strong style="padding-top: 2px;"><%-- 
-                  <span>댓글&nbsp;<c:out value="${board.breplyCnt}"/>개</span> --%>
-                  <span id="replyTotal"></span>
-                  <span>&nbsp;</span>
-                  
-                  <button type="button" id="btnChgCmtReg" class="btn btn-info btn-sm">댓글 작성</button>
-                  
-                  <button type="button" id="btnRegCmt" class="btn btn-warning btn-sm"
-                        style="display:none">댓글 등록</button>
-                  <button type="button" id="btnCancelRegCmt" class="btn btn-warning btn-sm"
-                        style="display:none">취소</button>&nbsp;&nbsp;&nbsp;
+					<div class="form-group">
+						<label>글제목</label> <input class="form-control" name="btitle"
+							id="btitle" value="${myboard.btitle }" readonly="readonly">
+					</div>
+					<div class="form-group">
+						<label>글내용</label>
+						<textarea class="form-control" rows="3" name="bcontent"
+							id="bcontent" readonly="readonly">${myboard.bcontent}</textarea>
+					</div>
 
-               </strong>
-            </p>
-         </div> <%-- /.panel-heading --%>
-      <div class="panel-body">
-      
-<%-- 댓글 입력창 div 시작 --%>
-<div class="form-group" style="margin-bottom: 5px;">
-   <textarea class="form-control txtBoxCmt" name="rcontent"
-           placeholder="댓글작성을 원하시면,&#10;댓글 작성 버튼을 클릭해주세요."
-           readonly="readonly"
-          ></textarea>
+					<div class="form-group">
+						<label>최종수정일</label> <input class="form-control" name="bmodDate"
+							id="bmodDate"
+							value='<fmt:formatDate pattern="yyyy/MM/dd HH:mm:ss" value="${myboard.bmodDate }"/>'
+							readonly="readonly">
+					</div>
+
+					<form id="frmSendValue">
+						<input type="hidden" name="pageNum"
+							value="${myboardPaging.pageNum }"> <input type="hidden"
+							name="rowAmountPerPage"
+							value="${myboardPaging.rowAmountPerPage }"> <input
+							type="hidden" name="scope" value="${myboardPaging.scope }">
+						<input type="hidden" name="keyword"
+							value="${myboardPaging.keyword }"> <input type="hidden"
+							name="endDate" value="${myboardPaging.endDate }">
+					</form>
+
+				</div><%-- /.panel-body --%>
+			</div><%-- /.panel --%>
+		</div><%-- /.col-lg-12 --%>
+	</div><%-- /.row --%>
+
+	<%-- 첨부파일 결과 표시 --%>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">첨부 파일</div>
+				<!-- /.panel-heading -->
+				<div class="panel-body">
+					<div class="form-group fileUploadResult">
+						<ul>
+							<%-- 업로드 후 처리결과가 표시될 영역 --%>
+							<c:choose>
+								<c:when test="${empty myboard.attachFileList }">
+									<li>첨부파일이 없습니다.</li>
+								</c:when>
+								<c:otherwise>
+									<c:forEach var="attachFile" items="${myboard.attachFileList}">
+										<c:choose>
+											<c:when test='${attachFile.fileType == "F"}'>
+												<li class="attachLi" data-repopath="${attachFile.repoPath}"
+													data-uploadpath="${attachFile.uploadPath}"
+													data-uuid="${attachFile.uuid}"
+													data-filename="${attachFile.fileName }" data-filetype="F">
+													<img src='${contextPath}/resources/img/icon-attach.png'
+													style='width: 25px;'> &nbsp;&nbsp;
+													${attachFile.fileName} </a>
+												</li>
+											</c:when>
+											<c:otherwise>
+												<c:set var="thumbnail"
+													value="${attachFile.repoPath}/${attachFile.uploadPath}/s_${attachFile.uuid}_${attachFile.fileName}" />
+												<li class="attachLi" data-repopath="${attachFile.repoPath}"
+													data-uploadpath="${attachFile.uploadPath }"
+													data-uuid="${attachFile.uuid }"
+													data-filename="${attachFile.fileName }" data-filetype="I">
+													<img
+													src='${contextPath}/displayThumbnail?fileName=${thumbnail}'
+													style='width: 25px;'>
+													&nbsp;&nbsp;${attachFile.fileName} </a>
+												</li>
+												<c:remove var="thumbnail" />
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</c:otherwise>
+							</c:choose>
+						</ul>
+					</div>
+				</div><!-- /.panel-body -->
+			</div><!-- /.panel -->
+		</div><!-- /.col-lg-12 -->
+	</div><!-- /.row -->
+
+	<%-- Modal:첨부파일 이미지 표시 --%>
+	<div class="modal fade" id="attachModal" tabindex="-1" role="dialog"
+		aria-labelledby="attachModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body" id="attachModal-body">
+					<%-- 이미지표시 --%>
+				</div>
+
+			</div>
+			<%-- /.modal-content --%>
+		</div>
+		<%-- /.modal-dialog --%>
+	</div>
+	<%-- /.modal --%>
+
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<p style="margin-bottom: 0px; font-size: 16px;">
+						<strong style="padding-top: 2px;">
+							<span id="replyTotal"></span> <span>&nbsp;</span>
+
+							<button type="button" id="btnChgCmtReg"
+								class="btn btn-info btn-sm">댓글 작성</button>
+
+							<button type="button" id="btnRegCmt"
+								class="btn btn-warning btn-sm" style="display: none">댓글
+								등록</button>
+							<button type="button" id="btnCancelRegCmt"
+								class="btn btn-warning btn-sm" style="display: none">취소</button>&nbsp;&nbsp;&nbsp;
+
+						</strong>
+					</p>
+				</div>
+				<%-- /.panel-heading --%>
+				<div class="panel-body">
+
+					<%-- 댓글 입력창 div 시작 --%>
+					<div class="form-group" style="margin-bottom: 5px;">
+						<textarea class="form-control txtBoxCmt" name="rcontent"
+							placeholder="댓글작성을 원하시면,&#10;댓글 작성 버튼을 클릭해주세요."
+							readonly="readonly"></textarea>
+					</div>
+					<hr style="margin-top: 10px; margin-bottom: 10px;">
+					<%-- 댓글 입력창 div 끝 --%>
+
+					<ul class="chat" id="chat">
+						<%-- 댓글 목록 표시 영역 - JavaScript로 내용이 생성되어 표시됩니다.--%>
+					</ul>
+					<%-- /.chat --%>
+
+
+				</div>
+				<%-- /.panel-body --%>
+				<div class="panel-footer text-center" id="showCmtPagingNums">
+					<%-- 댓글 목록의 페이징 번호 표시 영역 - JavaScript로 내용이 생성되어 표시됩니다.--%>
+				</div>
+			</div>
+			<%-- /.panel --%>
+		</div>
+		<%-- .col-lg-12 --%>
+	</div>
+	<%-- .row : 댓글 화면 표시 끝 --%>
+
+	<form id="frmCmtPagingValue">
+		<input type="hidden" name="pageNum" value=""> 
+		<input type="hidden" name="rowAmountPerPage" value="">
+	</form>
+
 </div>
-<hr style="margin-top: 10px; margin-bottom: 10px;"><%-- 댓글 입력창 div 끝 --%>
-
-            
-
-<ul class="chat" id="chat">
-<%-- 댓글 목록 표시 영역 - JavaScript로 내용이 생성되어 표시됩니다.--%><%-- 
-   <li class="left clearfix commentLi" data-bno="123456" data-rno="12">
-      <div>
-         <div>
-            <span class="header info-rwriter">
-               <strong class="primary-font">user00</strong>
-               <span>&nbsp;</span>
-               <small class="text-muted">2018-01-01 13:13</small>
-            </span>
-            <p>앞으로 사용할 댓글 표시 기본 템플릿입니다.</p>
-         </div>
-         
-         <div class="btnsComment" style="margin-bottom:10px">
-            <button type="button" style="display:in-block"
-                  class="btn btn-primary btn-xs btnChgReg">답글 작성</button>
-            <button type="button" style="display:none"
-                  class="btn btn-warning btn-xs btnRegCmt">답글 등록</button>
-            <hr class="txtBoxCmtHr" style="margin-top:10px; margin-bottom:10px">
-            <textarea class="form-control txtBoxCmtMod" name="rcontent" 
-                    style="margin-bottom:10px"
-                    placeholder="답글작성을 원하시면,&#10;답글 작성 버튼을 클릭해주세요."
-                   ></textarea>
-         </div>
-      </div>
-   </li> --%>
-</ul><%-- /.chat --%>
-
-
-         </div><%-- /.panel-body --%>
-         <div class="panel-footer text-center" id="showCmtPagingNums">
-            <%-- 댓글 목록의 페이징 번호 표시 영역 - JavaScript로 내용이 생성되어 표시됩니다.--%>
-         </div>
-      </div><%-- /.panel --%>
-   </div><%-- .col-lg-12 --%>
-</div><%-- .row : 댓글 화면 표시 끝 --%>
-
-<form id = "frmCmtPagingValue">
-   <input type="hidden" name="pageNum" value="">
-   <input type="hidden" name="rowAmountPerPage" value="">
-</form>
-
-</div><%-- /#page-wrapper --%>
+<%-- /#page-wrapper --%>
 
 <%-- Modal --%>
-<div class="modal fade" id="yourModal" tabindex="-1" role="dialog" aria-labelledby="yourModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="yourModalLabel">Modal title</h4>
-            </div>
-            <div class="modal-body" id="yourModal-body">메시지</div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-        </div><%-- /.modal-content --%>
-    </div><%-- /.modal-dialog --%>
-</div><%-- /.modal --%>
+<div class="modal fade" id="yourModal" tabindex="-1" role="dialog"
+	aria-labelledby="yourModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="yourModalLabel">Modal title</h4>
+			</div>
+			<div class="modal-body" id="yourModal-body">메시지</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+		<%-- /.modal-content --%>
+	</div>
+	<%-- /.modal-dialog --%>
+</div>
+<%-- /.modal --%>
 
 
 
@@ -746,7 +737,7 @@ $(document).ready(function(){
 });
 </script>
 
-<%@include file="../myinclude/myfooter.jsp" %>   
+<%@include file="../myinclude/myfooter.jsp"%>
 
 <%-- 
 //$(".btnModCmt").remove() ;

@@ -20,7 +20,7 @@
 	<input type="text" name="ename" /><br><br>
 	<input class="inputFile" type="file" name="uploadFiles" multiple="multiple"/>&nbsp;
 	<input class="inputFile" type="file" name="uploadFiles" />&nbsp;
-	<button>파일업로드</button><!--input들 name속성값 같게 맞춰줘야함! -->
+	<button>파일업로드</button>
 </form>
 
 

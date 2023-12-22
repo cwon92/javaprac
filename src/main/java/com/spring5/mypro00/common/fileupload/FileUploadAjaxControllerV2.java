@@ -13,50 +13,57 @@ import org.springframework.web.multipart.MultipartFile;
 
 //@Controller
 public class FileUploadAjaxControllerV2 {
-	private String uploadFileRepoDir = "C:/myupload";
+	
+	private String uploadFileRepoDIr = "C:/myupload" ;
+	
+	//form을 통한 다중 파일 업로드  //uploadFiles
 	
 	//1. 파일 업로드 요청 JSP 페이지 호출
+	
 	//@GetMapping(value= {"/fileUploadAjax"})
-	public String callFileUploadAjaxPage() {
-		System.out.println("'Form을 통한 업로드 테스트' JSP페이지 호출==============");
+	public String callFileUploadFormPage() {
+		System.out.println("'Ajax를 통한 업로드 테스트' JSP 페이지 호출======== ");
 		return "sample/fileUploadAjax";
+		
 	}
-	
-	
 	
 	//2. 파일 업로드 처리
-	//@PostMapping(value="/fileUploadAjaxAction")
-	public @ResponseBody String fileUploadAction(@ModelAttribute("ename") String ename,
-												  MultipartFile[] uploadFiles) {
+	//@PostMapping(value = "/fileUploadAjaxAction")
+	@ResponseBody
+	public String fileUploadActionForm(MultipartFile[] yourUploadFiles) {
 		
-		String fileName = null;
-		String myUuid = null;
+		String fileName = null ;
 		
-		for(MultipartFile uploadFile : uploadFiles) {
-			System.out.println("=====================================");
-			System.out.println("Uploaded File Name: " + uploadFile.getOriginalFilename());
-			System.out.println("Uploaded File Size: " + uploadFile.getSize());
+		//UUID를 이용한 고유한 파일이름 적용
+		String myUuid = null ;
+		
+		for(MultipartFile uploadFile : yourUploadFiles) {
+			System.out.println("=============================");
+			System.out.println("Upload File Name: " + uploadFile.getOriginalFilename());
+			System.out.println("Upload File Size: " + uploadFile.getSize());
+			
+//			File saveuploadFile = new File(uploadFileRepoDIr, uploadFile.getOriginalFilename());
 			
 			fileName = uploadFile.getOriginalFilename();
-			//파일이름.확장자, 경로명|파일이름.확장자 (아래는 파일 이름만 남기는 처리임)
-			fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+			// 파일이름.확장자, 경로명\파일이름.확장자, 파일이름만 남기는 처리.
+			fileName = fileName.substring(fileName.lastIndexOf("\\") + 1) ;
 			
-			//UUID를 이용한 고유한 파일 이름 적용
-			myUuid = UUID.randomUUID().toString();
+			//UUID를 이용한 고유한 파일이름 적용
+			myUuid = UUID.randomUUID().toString() ;
 			
-			fileName = myUuid + "_" + fileName;
+			fileName = myUuid + "_" + fileName ;
 			
-			File saveUploadfile = new File(uploadFileRepoDir, fileName);
+			File saveuploadFile = new File(uploadFileRepoDIr, fileName);
 			
 			try {
-				uploadFile.transferTo(saveUploadfile);
+				uploadFile.transferTo(saveuploadFile);
+				
 			} catch (IllegalStateException | IOException e) {
 				System.out.println("error: " + e.getMessage());
-			}
-			
+			} 
+
 		}
 		
-		return "yourSuccess";
+		return "yourSuccess" ;
 	}
-	
 }

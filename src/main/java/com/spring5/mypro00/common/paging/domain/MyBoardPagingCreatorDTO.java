@@ -38,7 +38,7 @@ public class MyBoardPagingCreatorDTO {
 		//계산된 시작 페이징 번호:
 		this.startPagingNum = this.endPagingNum - (this.pagingNumCnt -1) ;
 		
-		//총 페이지 수 = 맨 마지막 페이지번호
+		//총 페이지 수 = 맨 마지막 페이징번호
 		this.lastPageNum = (int) Math.ceil((double)this.rowTotal / this.myboardPaging.getRowAmountPerPage());
 		
 		//맨 마지막 페이지번호를 endPagingNum에 대입

@@ -5,7 +5,9 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.4.xsd
+		http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
@@ -15,6 +17,7 @@
 	
 	<!-- Spring MVC @Controller 기능 활성화 -->
 	<annotation-driven />
+	
 	<!-- Spring AOP 기능 활성화 -->
 	<aop:aspectj-autoproxy/>
 
@@ -36,10 +39,13 @@
 	<context:component-scan base-package="com.spring5.mypro00.controller"/>
 	<context:component-scan base-package="com.spring5.mypro00.common.fileupload"/>
 	<context:component-scan base-package="com.spring5.mypro00.common.filedownload"/>
+	<context:component-scan base-package="com.spring5.mypro00.common.security"></context:component-scan>
 <!-- 	
-	<context:component-scan base-package="sample.less02.spring_controller"/>
+	<context:component-scan base-package="sample.less02.spring_controller"/> 
 	<context:component-scan base-package="sample.less03.aop"/>
-	<context:component-scan base-package="sample.less03.service"/> -->
+	<context:component-scan base-package="sample.less03.service"/>
+-->
+
 	
 <!-- Servlet-based MultipartResolver implementation for Apache Commons FileUpload 1.2 or above.  -->
 <!-- 
@@ -51,19 +57,16 @@
        <beans:property name="maxInMemorySize" value="20971520"/>
     </beans:bean> -->
     
+<!-- 멀티파티 업로드 구성을 위한 MultiPartResolver 빈 설정 -->
+    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>
 
-	<!-- 멀티파티 업로드 구성을 위한 MultiPartResolver 빈 설정 -->
-    <beans:bean id="multipartResolver"
-    			class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>
-
-	<!-- 스프링 스케쥴러 관련 설정:(Spring Batch) -->   
-   <task:scheduler id="myCleearFileScheduler1" pool-size="3"/>
-   <task:annotation-driven scheduler="myCleearFileScheduler1" />
-   
-   <context:component-scan base-package="com.spring5.mypro00.common.task"/>
-   
-
-
-
-
+<!-- 스프링 스케쥴러 관련 설정:(Spring Batch) -->   
+	<task:scheduler id="myClearFileScheduler1" pool-size="3"/>
+	<task:annotation-driven scheduler="myClearFileScheduler1" />
+	
+	<context:component-scan base-package="com.spring5.mypro00.common.task"/>
+	
+<!-- 어노테이션을 이용한 스프링 시큐리티 활성화 -->	
+	<security:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
+	
 </beans:beans>
