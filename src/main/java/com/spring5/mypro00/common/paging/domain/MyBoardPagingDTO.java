@@ -15,7 +15,7 @@ public class MyBoardPagingDTO {
 	private String keyword ; //검색어
 	
 	//@DateTimeFormat(pattern = "yyyy-MM-dd")  //java.util.Date
-	private String startDate ;
+	private String beginDate ;
 		
 	//@DateTimeFormat(pattern = "yyyy-MM-dd")  //java.util.Date
 	private String endDate ;

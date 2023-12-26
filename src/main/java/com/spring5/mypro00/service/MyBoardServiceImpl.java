@@ -25,12 +25,14 @@ import com.spring5.mypro00.mapper.MyBoardMapper;
 public class MyBoardServiceImpl implements MyBoardService {
 	
 	private MyBoardMapper myBoardMapper ;
-	private MyBoardAttachFileMapper myBoardAttachFileMapper;
+	private MyBoardAttachFileMapper myBoardAttachFileMapper ;
 	
 	//방법2: 모든 필드 초기화 생성자
-	public MyBoardServiceImpl(MyBoardMapper myBoardMapper, MyBoardAttachFileMapper myBoardAttachFileMapper) {
+	public MyBoardServiceImpl(MyBoardMapper myBoardMapper, 
+							  MyBoardAttachFileMapper myBoardAttachFileMapper) {
 		this.myBoardMapper = myBoardMapper;
-		this.myBoardAttachFileMapper = myBoardAttachFileMapper;
+		this.myBoardAttachFileMapper = myBoardAttachFileMapper ;
+		
 		//System.out.println("MyBoardServiceImpl의 모든 필드 초기화생성자입니다.");
 		//System.out.println("myBoardMapper: " + myBoardMapper);
 	}
@@ -69,15 +71,18 @@ public class MyBoardServiceImpl implements MyBoardService {
 //		return pagingCreator;
 		//return myBoardMapper.selectMyBoardList() ;
 		
-		String startDate = myboardPaging.getStartDate() ;
+		String beginDate = myboardPaging.getBeginDate() ;
 		String endDate = myboardPaging.getEndDate() ;
+		
+		//System.out.println("beginDate: " + beginDate);
+		//System.out.println("endDate: " + endDate);
 		
 		Date _endDate = null ;
 		Calendar myCal = null ;
 		
-		if((startDate != null && startDate.length() != 0) 
+		if((beginDate != null && beginDate.length() != 0) 
 				&& (endDate != null && endDate.length() != 0)) {
-			if(startDate.equals(endDate)) {
+			if(beginDate.equals(endDate)) {
 				
 				SimpleDateFormat myDateFmt = new SimpleDateFormat("yyyy-MM-dd");
 				try {
@@ -122,16 +127,17 @@ public class MyBoardServiceImpl implements MyBoardService {
 		
 		myBoardMapper.insertMyBoard(myboard) ;
 		
-		List<MyBoardAttachFileVO> attachFileList = myboard.getAttachFileList();
+		List<MyBoardAttachFileVO> attachFileList = myboard.getAttachFileList() ;
 		
-		if(attachFileList != null && attachFileList.size() > 0) {
+		if (attachFileList != null && attachFileList.size() > 0) {
 			
 			attachFileList.forEach(
 					
 					attachFile -> {
-						attachFile.setBno(myboard.getBno());
-						myBoardAttachFileMapper.insertAttachFile(attachFile);
-					}); //forEeah-end
+						attachFile.setBno(myboard.getBno()) ;
+						myBoardAttachFileMapper.insertAttachFile(attachFile) ;
+						
+			}); //forEach-end
 			
 		}
 		
@@ -140,22 +146,23 @@ public class MyBoardServiceImpl implements MyBoardService {
 
 	//특정 게시물 조회: 특정 게시물 하나의 데이터를 가져옴
 	@Override
+	@Transactional
 	public MyBoardVO getBoard(long bno, String result) {
-		MyBoardVO myboard = myBoardMapper.selectMyBoard(bno);	
 		
+		MyBoardVO myboard = myBoardMapper.selectMyBoard(bno) ;
 		
-		if (result == null) {//목록페이지에서 조회요청
+		if (result == null) {//목록페이지에서 조회요청 시에만
 			myBoardMapper.updateBviewCnt(bno) ;
-		} 
+		}
 		
-		System.out.println("myboard: " + myboard);
+		System.out.println("myBoard: " + myboard);
 		System.out.println("조회수: " + myboard.getBviewCnt());
 		
 		return myboard ; 
 		
 	}
 	
-	//특정 게시물 수정 삭제 화면 호출
+	//특정 게시물 수정 삭제 화면 호출 
 	@Override
 	public MyBoardVO getBoard2(long bno) {
 		
@@ -172,45 +179,53 @@ public class MyBoardServiceImpl implements MyBoardService {
 	public boolean modifyBoard(MyBoardVO myboard) {
 		
 		//게시물 수정
-		//첨부파일 정보 수정
+		//첨부파일 정보 수정(기존 첨부파일정보 삭제 후, 수정페이지에서 전달된 파일정보를 입력)
+		
 		long bno = myboard.getBno();
-		boolean boardModifyResult = (myBoardMapper.updateMyBoard(myboard)==1);
+
+		boolean boardModifyResult = (myBoardMapper.updateMyBoard(myboard) == 1);
 		
-		myBoardAttachFileMapper.deleteAttachFiles(bno);
+		myBoardAttachFileMapper.deleteAttachFiles(bno); 
 		
-		List<MyBoardAttachFileVO> attachFileList = myboard.getAttachFileList();
+		List<MyBoardAttachFileVO> attachFileList = myboard.getAttachFileList() ;
 		
-		if(boardModifyResult && attachFileList != null) {
+		if (boardModifyResult && attachFileList != null) {
 			for(MyBoardAttachFileVO attachFile : attachFileList) {
 				attachFile.setBno(bno);
-				myBoardAttachFileMapper.insertAttachFile(attachFile);
+				myBoardAttachFileMapper.insertAttachFile(attachFile) ;	
 			}
+			
 		}
+
 		return boardModifyResult;
 		
-//		return myBoardMapper.updateMyBoard(myBoard) == 1 ;
+
 	}
 
-//게시물삭제: 실제삭제
-//실습에서만 사용(댓글이 없어야함)
+//게시물삭제: 실제삭제(첨부파일 삭제 후, 게시물 삭제)
+//실습에서만 사용(댓글이 없어야 함)
 	@Transactional
 	@Override
 	public boolean removeBoard(long bno) {
 		
 		//첨부파일 정보를 저장할 리스트 객체 생성
-		List<MyBoardAttachFileVO> attachFileList = getAttachFileList(bno);
+		List<MyBoardAttachFileVO> attachFileList = myBoardAttachFileMapper.selectAttachFiles(bno) ;
 		
-		//서버 업로드 파일 삭제
+		//업로드 파일 정보 삭제				
+		int attachFileDeleteRows = myBoardAttachFileMapper.deleteAttachFiles(bno);
+		System.out.println("attachFileDeleteRows: " + attachFileDeleteRows);
+		
+		//업로드 파일 삭제
 		removeAttachFiles(attachFileList);
 		
-		//업로드 파일 정보 삭제
-		int attachFileDeleteRows = myBoardAttachFileMapper.deleteAttachFiles(bno);
 		int rows = myBoardMapper.deleteMyBoard(bno);
 
 		return (rows == 1) ;
 	}
 	
+//게시물삭제: 블라인드 처리	
 	@Override
+	@Transactional
 	public boolean modifyBdelFlag(long bno) {
 		
 		int rows = myBoardMapper.updateBdelFlag(bno);
@@ -218,58 +233,59 @@ public class MyBoardServiceImpl implements MyBoardService {
 		return (rows == 1) ;
 	}
 	
+	
 	//특정 게시물의 첨부파일 목록 조회
 	@Override
-	public List<MyBoardAttachFileVO> getAttachFileList(Long bno){
-		return myBoardAttachFileMapper.selectAttachFiles(bno);
+	public List<MyBoardAttachFileVO> getAttachFileList(Long bno) {
+		return myBoardAttachFileMapper.selectAttachFiles(bno) ;
 	}
 	
-	//특정 게시물의 서버 업로드 파일 파일 삭제
+	
+	//톰캣 서버의 업로드 파일 삭제 메서드
 	private void removeAttachFiles(List<MyBoardAttachFileVO> attachFileList) {
 		
 		if(attachFileList == null || attachFileList.size() == 0) {
-			return;
+			return ;
 		}
 		
-		System.out.println("삭제시작: 삭제목록:   \n" + attachFileList.toString()); 
+		System.out.println("삭제시작: 삭제파일 목록:======\n" + attachFileList.toString());
 		
 //		attachFileList.forEach(
 //				
 //				attachFile -> {
 //					//하나의 VO에 대한 실행코드를 작성, forEach 메서드가 반복함
 //				}
-//				
 //		);
 		
 		for(MyBoardAttachFileVO attachFile : attachFileList) {
-			Path filePath = Paths.get(attachFile.getRepoPath() + "/" +
-									  attachFile.getUploadPath()+ "/" +
-									  attachFile.getUuid() + "_" +
-									  attachFile.getFileName());
+			//하나의 VO에 대한 실행코드를 작성
+			Path filePath = Paths.get(attachFile.getRepoPath() ,
+								      attachFile.getUploadPath() ,
+								      attachFile.getUuid() + "_" + attachFile.getFileName()  );
 			
-			boolean deleteFileResult= false;
+			boolean deleteFileResult = false ;
 			
 			try {
-				deleteFileResult = Files.deleteIfExists(filePath);
+				deleteFileResult = Files.deleteIfExists(filePath) ;
 				
 				if(attachFile.getFileType().equals("I")) {
-					Path thumbnail = Paths.get(attachFile.getRepoPath() + "/" +
-											   attachFile.getUploadPath()+ "/" +
-											   attachFile.getUuid() + "_" +
-											   attachFile.getFileName());
-					deleteFileResult = Files.deleteIfExists(thumbnail);
+					Path thumbnail = Paths.get(attachFile.getRepoPath() ,
+											   attachFile.getUploadPath() ,
+											   "s_" + attachFile.getUuid() + "_" + attachFile.getFileName()  );
+					
+					Files.deleteIfExists(thumbnail) ;
+							
 				}
 				
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			
-					
 		}
 		
 		
 	}
-	
 
 }

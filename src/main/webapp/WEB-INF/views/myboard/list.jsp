@@ -79,8 +79,8 @@ https://startbootstrap.com/
 	</div>
 
 	<div class="form-group pull-right">
-		<input class="form-control" id="startDate" name="startDate" type="date"
-			   value="${pagingCreator.myboardPaging.startDate}" 
+		<input class="form-control" id="beginDate" name="beginDate" type="date"
+			   value="${pagingCreator.myboardPaging.beginDate}" 
 			   />
 		<input class="form-control" id="endDate" name="endDate" type="date"
 			   value="${pagingCreator.myboardPaging.endDate}" 
@@ -125,7 +125,10 @@ https://startbootstrap.com/
 				<tr class="moveDetail" data-bno="${myboard.bno }">
 					<td><c:out value="${myboard.bno }"/></td><%-- 
 					<td style="text-align: left"><a href="${contextPath }/myboard/detail?bno=${myboard.bno}" ><c:out value="${myboard.btitle }"/></a></td> --%>
-					<td style="text-align: left"><c:out value="${myboard.btitle }"/></td>
+					<td style="text-align: left">
+						<c:out value="${myboard.btitle }"/>
+						<small>[댓글수: <strong><c:out value="${myboard.breplyCnt}"/></strong>]</small>
+					</td>
 					<td>${myboard.bwriter }</td>
 					<td class="center"><fmt:formatDate value="${myboard.bregDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
 					<td class="center"><fmt:formatDate value="${myboard.bmodDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
@@ -326,12 +329,12 @@ $("#selectScope").on("change", function(){
 <%--기간 검색버튼 클릭 이벤트 처리 --%>
 $("#btnIntervalSearch").on("click", function(){
 	
-	var startDate = $("#startDate").val() ;
+	var beginDate = $("#beginDate").val() ;
 	var endDate = $("#endDate").val() ;
 	
 //	alert("변환전 endDate: " + endDate);
 	
-	if (!startDate || startDate == "" || !endDate || endDate == "") {
+	if (!beginDate || beginDate == "" || !endDate || endDate == "") {
 		alert("시작날짜와 끝날짜를 모두 선택하세요") ;
 		return ;
 	}
@@ -360,7 +363,7 @@ $("#btnReset").on("click", function(){
 	$("#selectAmount").val(10) ;
 	$("#selectScope").val("") ;
 	$("#keyword").val("") ;
-	$("#startDate").val("") ;
+	$("#beginDate").val("") ;
 	$("#endDate").val("") ;
 	$("#pageNum").val(1) ;
 	

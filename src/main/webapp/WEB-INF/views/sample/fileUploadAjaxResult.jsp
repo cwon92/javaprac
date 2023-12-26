@@ -11,10 +11,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>File Upload Ajax : Result Page</title>
+<title>File Upload Ajax - Result Page</title>
 </head>
 <body>
-	<h2>${ename }님, 파일 업로드를 성공했습니다.</h2>
+	<h2>${ename }님, 파일 업로드를 결과 페이지입니다.</h2>
 
 
 </body>

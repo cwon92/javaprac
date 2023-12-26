@@ -15,11 +15,18 @@
 
 <!-- 스프링 시큐리티 기능 구성 -->
 <security:http>
+<!-- 
+	<security:csrf /> -->
 	<security:intercept-url pattern="/" access="permitAll"/>
 	<security:intercept-url pattern="/myboard/list" access="hasAnyAuthority('ROLE_USER','ROLE_MEMBER','ROLE_MANAGER')"/>
 	<security:intercept-url pattern="/myboard/register" method="GET" access="isAuthenticated()"/>
 	<security:intercept-url pattern="/myboard/register" method="POST" access="isAuthenticated()"/>
-	<security:form-login/>
+	<!-- 
+	<security:form-login login-page="/login"/> -->
+	<security:form-login login-page="/myLogin"/>
+	
+	<security:logout />
+	
 </security:http>
 
 

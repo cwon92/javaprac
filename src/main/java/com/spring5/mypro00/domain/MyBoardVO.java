@@ -4,15 +4,15 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+//import lombok.AllArgsConstructor;
+//import lombok.Data;
+//import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +29,8 @@ public class MyBoardVO {
 	private int bviewCnt ;
 	private int breplyCnt ;
 	private int bdelFlag ; //0: 유지, 1: 삭제요청됨
+	
+	private List<MyBoardAttachFileVO> 
+				attachFileList ;
 
-	private List<MyBoardAttachFileVO> attachFileList;
 }

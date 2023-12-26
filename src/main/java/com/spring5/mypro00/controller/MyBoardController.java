@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +72,7 @@ public class MyBoardController {
 	
 //	등록 페이지 호출
 	@GetMapping("/register")
+	@PreAuthorize("isAuthenticated()")
 	public String showBoardRegisterPage() {
 		System.out.println("등록페이지 호출.......");
 		
@@ -78,20 +81,29 @@ public class MyBoardController {
 
 
 	//게시물 등록 처리
+	
 	@PostMapping("/register")
+	@PreAuthorize("isAuthenticated()")
 	public String registerNewBoard(MyBoardVO myboard,
 			                       RedirectAttributes redirectAttr) {
 		
-		if(myboard.getAttachFileList() != null) {
-			myboard.getAttachFileList().forEach(attachFile -> System.out.println(attachFile.toString()));
-		}else {
-			System.out.println("==================첨부파일 없음======================");
+		List<MyBoardAttachFileVO> myAttachFileList = myboard.getAttachFileList() ;
+		
+		if(myAttachFileList != null) {
+			myAttachFileList
+				   .forEach(attachFile -> System.out.println(attachFile.toString())) ;
+		} else {
+			System.out.println("<<<<<<<<<<<<<<<<<<< 첨부파일 없음 >>>>>>>>>>>>>>>>>>>>>");
 		}
 		System.out.println();
 		
+		
 		long bno = myBoardService.registerBoard(myboard) ;
 		
+		//return "redirect:/myboard/list?bno=" + bno ;
+		
 		redirectAttr.addFlashAttribute("result", bno) ;
+		System.out.println("result: " + redirectAttr.getFlashAttributes());
 		
 		return "redirect:/myboard/list";
 		
@@ -104,21 +116,22 @@ public class MyBoardController {
 		
 		MyBoardVO myboard = null ;
 
-		System.out.println("result: " + result) ;
+		System.out.println("Detail.jsp-수정삭제 후: result: " + result) ;
+		System.out.println("Detail.jsp-수정삭제 후: bno: " + bno);
+		
 		myboard = myBoardService.getBoard(bno, result) ;
 		
 		model.addAttribute("myboard", myboard) ;
 		model.addAttribute("result", result) ;
 		
 		System.out.println("model: " + model);
-//		System.out.println("myboard: " + model.getAttribute("myboard"));
-//		System.out.println("result: " + model.getAttribute("result"));
 		
 		return "myboard/detail" ;
 	}
 	
 	//특정 게시물 수정삭제 페이지 호출
 	@GetMapping("/modify")
+	@PreAuthorize("isAuthenticated() && principal.username == #myboard.bwriter")
 	public String showBoardModify(Long bno, Model model, 
 								  MyBoardPagingDTO myboardPaging) {
 		MyBoardVO myboard = myBoardService.getBoard2(bno) ;
@@ -130,6 +143,7 @@ public class MyBoardController {
 	
 //	특정 게시물 수정
 	@PostMapping("/modify")
+	@PreAuthorize("isAuthenticated() && principal.username == #myboard.bwriter")
 	public String modifyBoard(MyBoardVO myboard,
 						      RedirectAttributes redirectAttr,
 						      MyBoardPagingDTO myboardPaging) {
@@ -148,7 +162,7 @@ public class MyBoardController {
 		redirectAttr.addAttribute("rowAmountPerPage", myboardPaging.getRowAmountPerPage()) ;
 		redirectAttr.addAttribute("scope", myboardPaging.getScope()) ;
 		redirectAttr.addAttribute("keyword", myboardPaging.getKeyword()) ;
-		redirectAttr.addAttribute("startDate", myboardPaging.getStartDate()) ;
+		redirectAttr.addAttribute("beginDate", myboardPaging.getBeginDate()) ;
 		redirectAttr.addAttribute("endDate", myboardPaging.getEndDate()) ;
 		
 		return "redirect:/myboard/detail" ;
@@ -158,10 +172,13 @@ public class MyBoardController {
 	
 //	특정 게시물 삭제 POST /myboard/remove
 	@PostMapping("/remove")
-	public String removeBoard(Long bno, RedirectAttributes redirectAttr,
-							  MyBoardPagingDTO myboardPaging) {
+	@PreAuthorize("isAuthenticated() && principal.username == #myboard.bwriter")
+	public String removeBoard(MyBoardVO myboard,  
+							  RedirectAttributes redirectAttr,
+							  MyBoardPagingDTO myboardPaging ) {
 		
-		if (myBoardService.modifyBdelFlag(bno)) {
+		if (myBoardService.modifyBdelFlag(myboard.getBno())) {  //게시물 블라인드처리 시 사용
+//		if (myBoardService.removeBoard(bno)) {  //게시물 삭제 시 사용(댓글이 없는 경우에만 동작, 연습용)
 		//if (myBoardService.removeBoard(bno)) {
 			redirectAttr.addFlashAttribute("result","successRemove") ;
 			
@@ -173,18 +190,17 @@ public class MyBoardController {
 		redirectAttr.addAttribute("rowAmountPerPage", myboardPaging.getRowAmountPerPage()) ;
 		redirectAttr.addAttribute("scope", myboardPaging.getScope()) ;
 		redirectAttr.addAttribute("keyword", myboardPaging.getKeyword()) ;
-		redirectAttr.addAttribute("startDate", myboardPaging.getStartDate()) ;
+		redirectAttr.addAttribute("beginDate", myboardPaging.getBeginDate()) ;
 		redirectAttr.addAttribute("endDate", myboardPaging.getEndDate()) ;
 		
 		return "redirect:/myboard/list" ;
 	}
-
+	
+	
 	//특정 게시물의 첨부파일 정보를 JSON으로 전달(특정 게시물의 수정페이지에서 사용) ###########################
-	@GetMapping(value="/getFiles", produces = {"application/json;charset=utf-8"})
-	public @ResponseBody ResponseEntity<List<MyBoardAttachFileVO>> showAttachFiles(Long bno){
-		
-		return  new ResponseEntity<List<MyBoardAttachFileVO>>(myBoardService.getAttachFileList(bno), HttpStatus.OK) ;
+	@GetMapping(value = "/getFiles" , produces = {"application/json; charset=utf-8"})
+	public @ResponseBody ResponseEntity<List<MyBoardAttachFileVO>> showAttachFiles(Long bno) {
+		return new ResponseEntity<List<MyBoardAttachFileVO>>(myBoardService.getAttachFileList(bno), HttpStatus.OK);
 	}
-
 
 }

@@ -88,7 +88,7 @@
 		</div>
 	</div>
 
-<%-- Modal --%>
+<%-- Modal: 게시물 수정 후, 수정 결과 표시 모달 --%>
 <div class="modal fade" id="yourModal" tabindex="-1" role="dialog" aria-labelledby="yourModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -142,85 +142,49 @@
 		<c:choose>
 		<c:when test="${attachFile.fileType == 'F' }">
 			<li class="attachLi" 
+				data-repopath = "${attachFile.repoPath }"
 			    data-uploadpath = "${attachFile.uploadPath }" 
 			    data-uuid = "${attachFile.uuid }" 
 			    data-filename = "${attachFile.fileName }" 
 			    data-filetype = "F" >
 			        <img src='${contextPath}/resources/img/icon-attach.png' style='width:25px;'>
-			        &nbsp;&nbsp;${attachFile.fileName} 
+			        &nbsp;&nbsp;${attachFile.fileName}
 			</li>
 		</c:when>
 		<c:otherwise>
+			<c:set var="thumbnail" value="${attachFile.repoPath}/${attachFile.uploadPath}/s_${attachFile.uuid}_${attachFile.fileName}"/>
 			<li class="attachLi" 
+				data-repopath = "${attachFile.repoPath }"
 			    data-uploadpath = "${attachFile.uploadPath }" 
 			    data-uuid = "${attachFile.uuid }" 
 			    data-filename = "${attachFile.fileName }" 
-			    data-filetype = "F" >
-			        <img src='${contextPath}/resources/img/icon-attach.png' style='width:25px;'>
-			        &nbsp;&nbsp;${attachFile.fileName} 
+			    data-filetype = "I" >
+			        <img src='${contextPath}/displayThumbnail?fileName=${thumbnail}' style='width:25px;'>
+			        &nbsp;&nbsp;${attachFile.fileName}
 			</li>
+			<c:remove var="thumbnail"/>
 		</c:otherwise>
-		</c:choose>	
-	
+		</c:choose>
 	</c:forEach>
 </c:otherwise>
-
 </c:choose>
-
-<%--                     
-	$(uploadResult).each(function(i, attachFile){
-		
-		var fullFileName = encodeURI(attachFile.repoPath + "/" +
-									 attachFile.uploadPath + "/" +
-									 attachFile.uuid + "_" +
-									 attachFile.fileName ) ;
-		
-		if(attachFile.fileType == "F") {
-			htmlStr 
-			+="<li data-uploadpath='" + attachFile.uploadPath + "'" 
-			+ "    data-uuid='" + attachFile.uuid + "'" 
-			+ "    data-filename='" + attachFile.fileName + "'" 
-			+ "    data-filetype='F'>"
-//			+ "    <a href='${contextPath}/fileDownloadAjax?fileName=" + fullFileName +"'>"
-			+ "        <img src='${contextPath}/resources/img/icon-attach.png' style='width:25px;'>"
-			+ "        &nbsp;&nbsp;" + attachFile.fileName 
-//			+ "    </a>"
-			+  "  <span data-filename='" + fullFileName + "' data-filetype='F'>[삭제]</span>"
-			+ "</li>" ;
-			
-		} else { //else if(attachFile.fileType == "I") {
-			
-			var thumbnail = encodeURI(attachFile.repoPath + "/" +
-									  attachFile.uploadPath + "/s_" +
-									  attachFile.uuid + "_" +
-									  attachFile.fileName ) ;
-			
-		
-			htmlStr 
-			+="<li data-uploadpath='" + attachFile.uploadPath + "'" 
-			+ "    data-uuid='" + attachFile.uuid + "'" 
-			+ "    data-filename='" + attachFile.fileName + "'" 
-			+ "    data-filetype='I'>"
-//			+ "    <a href='${contextPath}/fileDownloadAjax?fileName=" + fullFileName +"'>" //다운로드
-//			+ "    <a href=\"javascript:showImage('" + fullFileName + "')\">"
-			+ "        <img src='${contextPath}/displayThumbnail?fileName=" + thumbnail + "'>"
-			+ "        &nbsp;&nbsp;" + attachFile.fileName 
-//			+ "    </a>"
-			+  "  <span data-filename='" + thumbnail + "' data-filetype='I'>[삭제]</span>"
-			+ "</li>" ;
-		}
-			
-	}); 
-	
-	fileUploadResult.append(htmlStr) ;
-
---%>
 	                    </ul>
 	                </div>
                 </div><!-- /.panel-body -->
             </div><!-- /.panel -->
         </div><!-- /.col-lg-12 -->
     </div><!-- /.row -->
+
+<%-- Modal: 첨부파일 이미지 표시 --%>
+<div class="modal fade" id="attachModal" tabindex="-1" role="dialog" aria-labelledby="attachModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="attachModal-body">
+            	<%--이미지표시 --%>
+            </div>
+        </div><%-- /.modal-content --%>
+    </div><%-- /.modal-dialog --%>
+</div><%-- /.modal --%>
     
 <%-- 댓글 요소 시작 --%>
 <div class="row">
@@ -254,31 +218,7 @@
 				<hr style="margin-top: 10px; margin-bottom: 10px;"><%-- 댓글 입력창 div 끝 --%>
 
 <ul class="chat" id="chat">
-<%-- 댓글 목록 표시 영역 - JavaScript로 내용이 생성되어 표시됩니다.--%><%-- 
-	<li class="left clearfix commentLi" data-bno="123456" data-rno="12">
-		<div>
-			<div>
-				<span class="header info-rwriter">
-					<strong class="primary-font">user00</strong>
-					<span>&nbsp;</span>
-					<small class="text-muted">2018-01-01 13:13</small>
-				</span>
-				<p>앞으로 사용할 댓글 표시 기본 템플릿입니다.</p>
-			</div>
-			
-			<div class="btnsComment" style="margin-bottom:10px">
-				<button type="button" style="display:in-block"
-						class="btn btn-primary btn-xs btnChgReg">답글 작성</button>
-				<button type="button" style="display:none"
-						class="btn btn-warning btn-xs btnRegCmt">답글 등록</button>
-				<hr class="txtBoxCmtHr" style="margin-top:10px; margin-bottom:10px">
-				<textarea class="form-control txtBoxCmtMod" name="rcontent" 
-						  style="margin-bottom:10px"
-						  placeholder="답글작성을 원하시면,&#10;답글 작성 버튼을 클릭해주세요."
-						 ></textarea>
-			</div>
-		</div>
-	</li> --%>
+
 </ul><%-- /.chat --%>
 
 			</div><%-- /.panel-body --%>
@@ -345,6 +285,41 @@ function runModal(result) {
 }
 </script>
 
+
+<%-- 첨부파일 이미지 표시 --%>
+<script>
+$(".attachLi").on("click", function(){
+	var objLi = $(this) ;
+	
+	var myFileName = objLi.data("repopath") + "/" + objLi.data("uploadpath") + "/" 
+				   + objLi.data("uuid") + "_" + objLi.data("filename") ;
+	
+	var myFileType = objLi.data("filetype") ;
+	
+	if(myFileType == "I") {
+		$("#attachModal-body").html("<img src='${contextPath}/fileDownloadAjax?fileName=" 
+										      + encodeURI(myFileName) 
+										      + "' style='width:100%;'>") ;
+		$("#attachModal").modal("show") ;
+	
+	} else {
+		self.location.href ="${contextPath}/fileDownloadAjax?fileName="  + encodeURI(myFileName) ;
+	}
+	
+	
+	
+	
+});
+
+<%-- 표시된 이미지 모달 감추기 --%>
+$("#attachModal").on("click", function(){
+	$("#attachModal").modal("hide") ;
+});
+
+
+
+
+</script>
 
 <%-- 댓글/답글 자바스크립트 시작--%>
 <script src="${contextPath }/resources/js/mycomment.js"></script>

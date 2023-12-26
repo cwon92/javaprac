@@ -1,289 +1,283 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- 문서 유형에 mapper를 설정해야 하고, XML 정의 파일은 Mapper의 정의를 가져오도록 설정함 -->
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- SQL문들은 <mapper>와 </mapper> 사이에 해당 문장 유형의 요소를 사용하여 정의함 -->
-<!-- mapper 요소의 namespace 속성에는 매퍼 인터페이스의 패키지이름이 포함된 전체이름을 설정함 -->
 <mapper namespace="com.spring5.mypro00.mapper.MyBoardMapper">
-
+ 	
 <!-- 게시물 목록조회(READ) --><!-- 
 	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO">
-		SELECT bno, btitle, bcontent, bwriter, bregDate, bmodDate, bviewsCnt, bviewsCnt, bdelFlag
-		FROM book_ex.tbl_myboard
+		SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelFlag
+		FROM book_ex.tbl_myboard 
 		ORDER BY bno DESC
 	</select> -->
 	
-	
-<!-- 게시물 목록조회(READ): 페이징 고려 --><!-- 
-	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO">
+	 	
+<!-- 게시물 목록조회(READ): 페이징 고려 --><!--  
+	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
 		<![CDATA[
-			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
-			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelflag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
 			       FROM book_ex.tbl_myboard a
 			       WHERE ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
-			      )
-			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+			       )
+			 WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1)) 
 		]]>
-	</select> -->	
-	
-	
-<!-- 게시물 총 개수 조회(페이징) --><!-- 
-	<select id="selectRowTotal" resultType="long">
-	SELECT count(*) rowtotal FROM book_ex.tbl_myboard
 	</select> -->
 	
-<!-- 검색 페이징 방법1-->
+<!-- 게시물 총 개수 조회(페이징) --><!-- 	
+	<select id="selectRowTotal" resultType="long">
+		SELECT COUNT(*) rowTotal FROM book_ex.tbl_myboard
+	</select> -->
 
-<!-- 게시물 목록조회(READ): 검색 페이징 고려 --><!-- 
+<!-- 검색 페이징 방법1 -->
+<!-- 게시물 목록조회(READ): 검색 페이징 --> <!-- 
 	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
 		<![CDATA[
-			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
-			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
-			       FROM book_ex.tbl_myboard a
-	     ]]>
-			  	   <where>
-			  	   <![CDATA[
-				   		ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
-				   ]]>
-				   	<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
-			       	<choose>
-			       		<when test="scope == 'T'.toString()">
-							AND (btitle LIKE '%' || #{keyword} || '%')     		
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelflag
+			FROM (	SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
+					FROM book_ex.tbl_myboard a
+		]]>
+					       
+			       	<where>
+			       <![CDATA[
+						ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
+			       ]]>
+					<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
+					<choose>
+						<when test="scope == 'T'.toString()">
+							AND (btitle LIKE '%'||#{keyword}||'%')
 			       		</when>
-			       		<when test="scope == 'C'.toString()">
-							AND (bcontent LIKE '%' || #{keyword} || '%')       		
+						<when test="scope == 'C'.toString()">
+							AND (bcontent LIKE '%'||#{keyword}||'%')
 			       		</when>
-			       		<when test="scope == 'W'.toString()">
-							AND (bwriter LIKE '%' || #{keyword} || '%')       		
+						<when test="scope == 'W'.toString()">
+							AND (bwriter LIKE '%'||#{keyword}||'%')
 			       		</when>
-			       		<when test="scope == 'TC'.toString()">
-							AND (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%')      		
+						<when test="scope == 'TC'.toString()">
+							AND (btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%') 
 			       		</when>
-			       		<when test="scope == 'TCW'.toString()">
-							AND (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%' OR bwriter LIKE '%' || #{keyword} || '%')    		
+						<when test="scope == 'TCW'.toString()">
+							AND (btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%')
 			       		</when>
 			       	</choose>
-			       	 </if>
+			       	</if>
 			       </where>
-		<![CDATA[	       
-			      )
-			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+		<![CDATA[
+			       )
+			 WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1)) 
 		]]>
+	</select> -->
+	
+<!-- 게시물 총 개수 조회(검색 페이징) -->	<!-- 
+	<select id="selectRowTotal" resultType="long"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		SELECT COUNT(*) rowTotal FROM book_ex.tbl_myboard
+		<where>
+		<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
+			<choose>
+				<when test="scope == 'T'.toString()">
+					(btitle LIKE '%'||#{keyword}||'%')
+	       		</when>
+				<when test="scope == 'C'.toString()">
+					(bcontent LIKE '%'||#{keyword}||'%')
+	       		</when>
+				<when test="scope == 'W'.toString()">
+					(bwriter LIKE '%'||#{keyword}||'%')
+	       		</when>
+				<when test="scope == 'TC'.toString()">
+					(btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%') 
+	       		</when>
+				<when test="scope == 'TCW'.toString()">
+					(btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%')
+	       		</when>
+	       	</choose>
+		</if>
+		</where>
 	</select>	 -->
 	
-	
-<!-- 게시물 총 개수 조회(페이징) --><!-- 
-	<select id="selectRowTotal" resultType="long"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
-	SELECT count(*) rowtotal FROM book_ex.tbl_myboard
-	<where>
-	<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
-       	<choose>
-       		<when test="scope == 'T'.toString()">
-				 (btitle LIKE '%' || #{keyword} || '%')     		
-       		</when>
-       		<when test="scope == 'C'.toString()">
-				 (bcontent LIKE '%' || #{keyword} || '%')       		
-       		</when>
-       		<when test="scope == 'W'.toString()">
-				 (bwriter LIKE '%' || #{keyword} || '%')       		
-       		</when>
-       		<when test="scope == 'TC'.toString()">
-				 (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%')      		
-       		</when>
-       		<when test="scope == 'TCW'.toString()">
-				 (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%' OR bwriter LIKE '%' || #{keyword} || '%')    		
-       		</when>
-       	 </choose>
-       	 </if>
-       	 </where>
-	</select> -->
-	
-	
-<!-- 검색 페이징 방법2-->
-<!-- 게시물 목록조회(READ): 페이징 고려 --><!-- 
+
+<!-- 검색 페이징 방법2 -->
+<!-- 게시물 목록조회(READ): 페이징 고려 --><!--   
 	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
 		<![CDATA[
-			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
-			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelflag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
 			       FROM book_ex.tbl_myboard a
 			       WHERE 
 		]]>
 		
-		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
-		   <foreach item='scope' collection="scopeArray">
-		      <trim prefix="OR">
-		         <choose>
-		            <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
-		            <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
-		            <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
-		         </choose>
-		      </trim> 
-		   </foreach>
-		</trim>    
-		
-		<![CDATA[      			       
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR" >
+			<foreach item='scope' collection="myScopeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+						<when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+						<when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+					</choose>
+				</trim> 
+			</foreach>
+		</trim>	 
+
+		<![CDATA[	       
 			       ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
-			      )
-			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+			       )
+			 WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1)) 
 		]]>
-	</select> -->
+	</select>  -->
+
 	
-	
-<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 --><!--  
+<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 --><!-- 	
 	<select id="selectRowTotal" resultType="long"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
-		SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO" >
+		SELECT COUNT(*) rowTotal FROM book_ex.tbl_myboard
 		<where>
-         <trim prefix="(" suffix=")" prefixOverrides="OR">
-            <foreach item='scope' collection="scopeArray">
-               <trim prefix="OR">
-                  <choose>
-                     <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
-                     <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
-                     <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
-                  </choose>
-               </trim> 
-            </foreach>
-         </trim>
-(OR btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%') AND  
-      (btitle LIKE '%제목6')
-             
-      </where>
-	</select> -->
-	
-<!-- 검색 페이징 방법3-->
-<!-- 게시물 목록조회(READ): 페이징 고려 -->
+			<trim prefix="(" suffix=")" prefixOverrides="OR">
+				<foreach item='scope' collection="myScopeArr">
+					<trim prefix="OR">
+						<choose>
+							<when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+							<when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+							<when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+						</choose>
+					</trim> 
+				</foreach>
+			</trim>	 
+		</where>
+	</select> 
+ -->
+
+<!-- 검색 페이징 방법2 -->
+<!-- 게시물 목록조회(READ): 페이징 고려, 기간검색 포함 -->  
 	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
 		<![CDATA[
-			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
-			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelflag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
 			       FROM book_ex.tbl_myboard a
 			       WHERE 
 		]]>
-		
-		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
-		   <foreach item='scope' collection="scopeArray">
-		      <trim prefix="OR">
-		         <choose>
-		            <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
-		            <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
-		            <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
-		         </choose>
-		      </trim> 
-		   </foreach>
-		</trim>    
-		
-		<![CDATA[      			       
+
+		<choose>
+			<when test="(beginDate != null and beginDate != '') and (endDate != null and endDate != '')">
+			 	bregDate BETWEEN TO_DATE(#{beginDate}, 'YYYY-MM-DD')
+			 				 AND TO_DATE(#{endDate}, 'YYYY-MM-DD') AND
+			</when>
+		</choose>
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR" >
+			<foreach item='scope' collection="myScopeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+						<when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+						<when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+					</choose>
+				</trim> 
+			</foreach>
+		</trim>	 
+
+		<![CDATA[	       
 			       ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
-			      )
-			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+			       )
+			 WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1)) 
 		]]>
-	</select>
+	</select> 
+
 	
-<!-- 	SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewsCnt, breplyCnt, bdelflag
-FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
-    FROM book_ex.tbl_myboard a
-    WHERE (bregdate BETWEEN TO_DATE('2023-12-01','YYYY-MM-DD') AND TO_DATE('2023-12-05', 'YYYY-MM-DD')) AND ROWNUM <= (1 * 10)
-    )
-    WHERE rn >= ((1 * 10) - (10 - 1)) ; -->
-	
-	
-<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 --> 
+<!-- 게시물 총 개수 조회(페이징): -->	
 	<select id="selectRowTotal" resultType="long"
-			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
-		SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+	        parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO" >
+		SELECT COUNT(*) rowTotal FROM book_ex.tbl_myboard
 		<where>
-         <trim prefix="(" suffix=")" prefixOverrides="OR">
-            <foreach item='scope' collection="scopeArray">
-               <trim prefix="OR">
-                  <choose>
-                     <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
-                     <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
-                     <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
-                  </choose>
-               </trim> 
-            </foreach>
-         </trim>
-<!-- (OR btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%') AND  
-      (btitle LIKE '%제목6')
--->             
-      </where>
-	</select>
-	
-	
+			<trim prefix="(" suffix=")" prefixOverrides="OR">
+				<foreach item='scope' collection="myScopeArr">
+					<trim prefix="OR">
+						<choose>
+							<when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+							<when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+							<when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+						</choose>
+					</trim> 
+				</foreach>
+			</trim>
+			<choose>
+				<when test="(beginDate != null and beginDate != '') and (endDate != null and endDate != '')">
+					AND bregDate BETWEEN TO_DATE(#{beginDate}, 'YYYY-MM-DD')
+				 		 		     AND TO_DATE(#{endDate}, 'YYYY-MM-DD')
+				</when>
+			</choose>	 
+		</where>
+	</select> 
+					
+
 <!-- 게시물 등록(CREATE) -->
-<!-- selectKey 이용안함 --><!-- 
+<!-- selectkey 이용않함 --><!-- 
 	<insert id="insertMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO">
 		INSERT INTO book_ex.tbl_myboard
 		VALUES (book_ex.seq_myboard.nextval,
-			#{btitle},
-			#{bcontent},
-			#{bwriter},
-	        DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+        		#{btitle},
+        		#{bcontent},
+        		#{bwriter},
+        		DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
 	</insert> -->
-	
-	<insert id="insertMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO" >
+
+	<insert id="insertMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO">
 		<selectKey order="BEFORE" keyProperty="bno" resultType="long">
-			SELECT book_ex.seq_myboard.nextval from dual
+			SELECT book_ex.seq_myboard.nextval FROM dual
 		</selectKey>
 		INSERT INTO book_ex.tbl_myboard
 		VALUES (#{bno},
-				#{btitle},
-				#{bcontent},
-				#{bwriter},
-	        DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
-	</insert>
+        		#{btitle},
+        		#{bcontent},
+        		#{bwriter},
+        		DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+	</insert>	
+
+<!-- 특정 게시물 조회 -->
+	<select id="selectMyBoard" resultType="com.spring5.mypro00.domain.MyBoardVO">
+		SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewCnt, breplyCnt, bdelFlag
+		FROM book_ex.tbl_myboard
+		WHERE bno = #{bno}
+	</select>
+
+<!-- 게시물 조회수 증가(+1씩 증가) -->
+	<update id="updateBviewCnt">
+		UPDATE book_ex.tbl_myboard
+		SET bviewCnt = bviewCnt + 1
+		WHERE bno = #{bno}
+	</update>
 
 <!-- 게시물 수정(UPDATE) -->
 	<update id="updateMyBoard" parameterType="com.spring5.mypro00.domain.MyBoardVO">
 		UPDATE book_ex.tbl_myboard
-		SET btitle = #{btitle},
-		    bcontent = #{bcontent},
-		    bmodDate = DEFAULT
-		WHERE bno = #{bno}
+		SET btitle = #{btitle} ,
+	    	bcontent = #{bcontent} ,
+	    	bmodDate = DEFAULT
+		WHERE bno = #{bno}	
 	</update>
-	
-<!-- 특정 게시물 조회 -->	
-	<select id="selectMyBoard" resultType="com.spring5.mypro00.domain.MyBoardVO">
-		SELECT bno, btitle, bcontent, bwriter, bregDate, bmodDate, bviewsCnt, bviewsCnt, bdelFlag
-		FROM  book_ex.tbl_myboard
-		WHERE bno = #{bno}
-	</select>
-	
-<!-- 게시물 조회수 증가(+1씩 증가) -->
-	<update id="updateBviewCnt">
-	UPDATE book_ex.tbl_myboard
-	set bviewscnt = bviewscnt+1
-	where bno = #{bno}
-	</update>
-
-	
 
 <!-- 게시물 삭제(DELETE) -->
 	<delete id="deleteMyBoard" parameterType="long">
 		DELETE FROM book_ex.tbl_myboard
-		WHERE bno = #{bno}
+		WHERE bno = #{bno} 
 	</delete>
-	
+
 <!-- 게시물 삭제요청(bdelFlag를 1로 업데이트) -->
 	<update id="updateBdelFlag" parameterType="long">
 		UPDATE book_ex.tbl_myboard
 		SET bdelFlag = 1
 		WHERE bno = #{bno}
 	</update>
-	
 
 
-<!-- 	<select id="selectSysdate" resultType="java.util.Date">
-		select sysdate from dual
-	</select> -->
+ 	
+ 	
+ 	
+ 	
+ 	<select id="selectSysdate" resultType="java.util.Date">
+ 		select sysdate from dual
+ 	</select>
+
 </mapper>
-
-
-

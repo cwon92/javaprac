@@ -48,8 +48,8 @@
                         <h2 class="panel-title">Please Sign In</h2>
                     </div>
                     <div class="panel-body">
-                        <form role="form" method="post" action="${contextPath }/myLoginProcess">
-                        <%-- <form role="form" method="post" action="${contextPath }/login"> --%>
+                        <form role="form" method="post" action="${contextPath }/myLoginProcess"><%-- 
+                        <form role="form" method="post" action="${contextPath }/login"> --%>
                         	<fieldset>
                         		<h6 class="text-muted"><c:out value="${error }"/></h6>
                         		<h6 class="text-muted"><c:out value="${logout }"/></h6>
@@ -57,18 +57,18 @@
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="아이디를 입력하세요." 
-                                           name="username" id="username" type="text" required autofocus>
+                                           name="userId" id="username" type="text" required autofocus>
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="암호를 입력하세요." 
-                                           name="password" id="password" type="password" required>
+                                           name="userPw" id="password" type="password" required>
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                    	<!-- remember-me input에 value 속성을 설정하면 
-                                    			spring security의 remember-me 기능이 동작하지 않음 -->
-                                        <!-- <input name="myRememberMe" type="checkbox" >자동로그인(Remember Me) -->
-                                        <input name="remember-me" type="checkbox" >자동로그인(Remember Me)
+                                    <!-- remember-me input에 value 속성을 설정하시면, 
+                                         spring security의 remember-me 기능이 동작하지 않습니다. -->
+                                        <input name="remember-me" type="checkbox" >자동로그인(Remember Me)<!-- 
+                                        <input name="myRememberMe" type="checkbox" >자동로그인(Remember Me) -->
                                     </label>
                                 </div>
                                 <div>

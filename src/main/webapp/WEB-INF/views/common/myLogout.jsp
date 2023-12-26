@@ -48,7 +48,7 @@
                         <h2 class="panel-title">Really Logout ?</h2>
                     </div>
                     <div class="panel-body"><%-- 
-                        <form role="form" method="post" action="${contextPath }/myLogoutProcess"> --%>
+                        <form role="form" method="post" action="${contextPath }/logout"> --%>
                         <form role="form" id="frmMyLogout" method="post" action="${contextPath }/myLogoutProcess">
                         	<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }"/>
 							<fieldset>

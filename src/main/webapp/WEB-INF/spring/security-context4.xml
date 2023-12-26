@@ -24,25 +24,11 @@
 <!-- 스프링 시큐리티 기능 구성 -->
 <security:http>
 <!-- 
-	<security:csrf /> --><!-- 
-	<security:intercept-url pattern="/**" access="permitAll"/> --><!-- 
+	<security:csrf /> -->
 	<security:intercept-url pattern="/" access="permitAll"/>
 	<security:intercept-url pattern="/myboard/list" access="hasAnyAuthority('ROLE_USER', 'ROLE_MEMBER', 'ROLE_MANAGER', 'ADMIN')"/>
 	<security:intercept-url pattern="/myboard/register" method="GET" access="hasAnyAuthority('ADMIN')"/>
-	<security:intercept-url pattern="/myboard/register" method="POST" access="isAuthenticated()"/> -->
-	
-<!-- 프로젝트에 시큐리티 적용 -->
-<!-- home, 게시물 목록: 인증/승인 검사 없음, 모두 허용, GET 방식만 -->
-	<security:intercept-url  pattern="/" method="GET" access="permitAll"/>
-	<security:intercept-url  pattern="/myboard/list" method="GET" access="permitAll"/>
-		
-<!-- 게시물 등록 --><!-- 
-	<security:intercept-url pattern="/myboard/register" method="GET" access="isAuthenticated()"/>	
-	<security:intercept-url pattern="/myboard/register" method="POST" access="isAuthenticated()"/> -->
-
-<!-- 게시물 상세 -->
-	<security:intercept-url pattern="/myboard/detail" method="GET" access="permitAll"/>	
-	
+	<security:intercept-url pattern="/myboard/register" method="POST" access="isAuthenticated()"/>
 	<!-- 
 	<security:form-login login-page="/login"/> -->
 	<security:form-login login-page="/myLogin" 

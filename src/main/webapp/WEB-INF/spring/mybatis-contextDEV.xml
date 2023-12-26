@@ -50,9 +50,11 @@
 	</bean>
 	
 <!-- 5. Mybatis Mapper 파일을 액세스하는 인터페이스의 위치를 설정 -->
-	<!-- <mybatis-spring:scan base-package="com.spring5.mypro00.mapper" factory-ref="sqlSessionFactory"/>--> 	
-	<mybatis-spring:scan base-package="com.spring5.mypro00.mapper" template-ref="sqlSession"/>
 	
+<!--  
+	<mybatis-spring:scan base-package="com.spring5.mypro00.mapper" factory-ref="sqlSessionFactory"/> -->  	
+	<mybatis-spring:scan base-package="com.spring5.mypro00.mapper" template-ref="sqlSession" /> 
+
 
 <!-- @Transaction 어노테이션 기능을 활성화(스프링 트랜잭션 기능 활성화) -->
 	<bean id="txManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -60,5 +62,6 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="txManager"/>
+	
 	
 </beans>

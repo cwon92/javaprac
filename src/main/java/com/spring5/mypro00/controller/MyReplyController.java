@@ -2,6 +2,8 @@ package com.spring5.mypro00.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +55,7 @@ public class MyReplyController {
 	@PostMapping(value = "/{bno}/new" , 
 				 consumes = {"application/json;charset=utf-8"} ,//consumes:브라우저--> 메서드로 전송한 데이터 유형
 				 produces = {"text/plain; charset=utf-8"} )		//produces:메서드--> 브라우저로 보내는 데이터 유형
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<String> registerReplyForBoard(@PathVariable("bno") long bno ,
 														@RequestBody MyReplyVO myreply) {
 		Long registeredRno = myReplyService.registerReplyForBoard(myreply);
@@ -75,6 +78,7 @@ public class MyReplyController {
 	@PostMapping(value = "/{bno}/{prno}/new" , 
 				 consumes = {"application/json;charset=utf-8"} ,//consumes:브라우저--> 메서드로 전송한 데이터 유형
 				 produces = {"text/plain; charset=utf-8"} )		//produces:메서드--> 브라우저로 보내는 데이터 유형
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<String> registerReplyForReply(@PathVariable("bno") long bno ,
 														@PathVariable("prno") long prno,
 													    @RequestBody MyReplyVO myreply) {
@@ -116,6 +120,7 @@ public class MyReplyController {
 					method = {RequestMethod.PUT, RequestMethod.PATCH} ,
 					consumes = "application/json;charset=utf-8" ,
 					produces = "text/plain;charset=utf-8") 
+	@PreAuthorize("isAuthenticated() && principal.username == #myreply.rwriter")
 	public String modifyReply(@PathVariable("bno") Long bno ,
 							  @PathVariable("rno") Long rno ,
 							  @RequestBody MyReplyVO myreply){
@@ -126,16 +131,17 @@ public class MyReplyController {
 		} else {
 			return "modifyFail" ;	
 		}
-		
-		
 	}
 	
 	
 	//특정 게시물에 대한 특정 댓글/답글 삭제(rdelFlag를 1로 업데이트)	/replies/{bno}/{rno}
-	
-	@DeleteMapping(value = "/{bno}/{rno}" , produces = "text/plain;charset=utf-8")
+	@DeleteMapping(value = "/{bno}/{rno}" ,
+				   consumes = "application/json; charset=utf-8",
+				   produces = "text/plain;charset=utf-8")
+	@PreAuthorize("isAuthenticated() && principal.username == #yourReply.rwriter")
 	public ResponseEntity<String> removeReply(@PathVariable("bno") Long bno, 
-											  @PathVariable("rno") Long rno) {
+											  @PathVariable("rno") Long rno,
+											  @RequestBody MyReplyVO yourReply) {
 		
 		return myReplyService.modifyRdelFlag(bno, rno)  
 			   ? new ResponseEntity<String>("removeSuccess", HttpStatus.OK)

@@ -60,10 +60,10 @@
     <!-- Custom Theme JavaScript -->
     <script src="${contextPath }/resources/dist/js/sb-admin-2.js"></script>
 
-   <!-- favicon.ico 404 Error 해결 -->  
-   <link rel="shortcut icon" href="${contextPath}/resources/myicon/favicon.ico" type="image/x-icon">
-   <!-- favicon 을 사용하지 않도록 설정--><!-- 
-   <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> -->
+	<!-- favicon.ico 404 Error 해결 -->  
+	<link rel="shortcut icon" href="${contextPath}/resources/myicon/favicon.ico" type="image/x-icon">
+	<!-- favicon 을 사용하지 않도록 설정--><!-- 
+	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> -->
 </head>
 
 <body id="me">
@@ -88,23 +88,24 @@
                     <a class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-messages">
-                        <li><a id="myLogin" href="${contextPath}/myLogin">
-                            <i class="fa fa-sign-in fa-fw"></i> Sign in</a>
+                    <ul class="dropdown-menu">
+                        <li><a id="myLogin" href="${contextPath }/myLogin">
+                        	<i class="fa fa-sign-in fa-fw"></i> Sign in</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a id="myLogout" href="${contextPath}/myLogout">                  
-                            <i class="fa fa-sign-out fa-fw"></i> Sign out</a>
+                        <li><a id="myLogout" href="${contextPath }/myLogout">
+                        	<i class="fa fa-sign-out fa-fw"></i> Sign out</a>
                         </li>
                     </ul><!-- /.dropdown-user -->
                 </li><!-- /.dropdown -->
-            </ul><!-- /.navbar-top-links -->
+            </ul>
+            <!-- /.navbar-top-links -->
 
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
                         <li>
-                            <a href="${contextPath }"><i class="fa fa-home fa-fw"></i> Home Page</a>
+                            <a href="${contextPath }/"><i class="fa fa-home fa-fw"></i> Home Page</a>
                         </li>
                         <li>
                             <a href="${contextPath }/myboard/list"><i class="fa fa-table fa-fw"></i> Board List</a>
@@ -113,7 +114,7 @@
                             <a href="${contextPath }/myboard/register"><i class="fa fa-edit fa-fw"></i> Board Register</a>
                         </li>
                         <li>
-                            <a href="${contextPath }/myboard/detail?bno=1"><i class="fa fa-edit-in fa-fw"></i> 1번 게시물 조회</a>
+                            <a href="${contextPath }/myboard/detail?bno=1"><i class="fa fa-edit fa-fw"></i> 1번 게시물 조회</a>
                         </li>
                         <li>
                             <a href="${contextPath }/myLogin"><i class="fa fa-sign-in fa-fw"></i> Sign in</a>
@@ -121,12 +122,9 @@
                         <li>
                             <a href="${contextPath }/myLogout"><i class="fa fa-sign-out fa-fw"></i> Sign out</a>
                         </li>
-                        
                     </ul>
-                </div>
-                <!-- /.sidebar-collapse -->
-            </div>
-            <!-- /.navbar-static-side -->
+                </div><!-- /.sidebar-collapse -->
+            </div><!-- /.navbar-static-side -->
         </nav>
 
  

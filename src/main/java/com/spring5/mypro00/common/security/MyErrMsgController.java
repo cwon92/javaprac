@@ -9,18 +9,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MyErrMsgController {
-   
-   @GetMapping(value = "/accessForbiddenError")
-   public String sendAccessForbiddenPage(Authentication authentication, 
-		   								 Model model, 
-		   								 HttpServletRequest req) {
-	   
-      System.out.println("authentication: " + authentication);
-      System.out.println("myName: " + req.getAttribute("myName"));
-      
-      model.addAttribute("msg", "접근이 금지됨............");
-      
-      return "common/err_msg/myAccessForbiddenMsg" ;
-   }
+	
+	@GetMapping(value = "/accessForbiddenError")
+	public String sendAccessForbiddenPage(Authentication authentication, Model model, 
+										  HttpServletRequest request) {
+		System.out.println("authentication: " + authentication);
+		System.out.println("myName:" + request.getAttribute("myName"));
+		model.addAttribute("msg", "접근이 금지됨.............") ;
+
+		return "common/err_msg/myAccessForbiddenMsg" ;
+	}
+	
 
 }

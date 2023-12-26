@@ -4,27 +4,29 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring5.mypro00.mapper.MyScheduledMapper">
 
-<!-- 하루 전 날짜까지의 모든 첨부파일 정보: 
-	(오늘) 12/20 00:00:00 기준으로
-	12/19 00:00:00 전까지 업로드 된 파일 정보 표시-->
-	<select id="selectAttachFilesuntilBeforeOneDay" 
+<!-- 
+하루 전 날짜까지의 모든 첨부파일 정보: 
+(오늘) 12-20 00:00:00 기준으로
+12-19 00:00:00 전까지 업로드 된 파일 정보 표시
+-->
+
+	<select id="selectAttachFilesUntilBeforeOneDay" 
 			resultType="com.spring5.mypro00.domain.MyBoardAttachFileVO">
 	<![CDATA[
-		SELECT uuid, uploadPath, fileName, fileType, bno
+		SELECT uuid ,uploadpath ,filename ,filetype, bno
 		FROM book_ex.tbl_myattachFiles
-		WHERE uploadPath < TO_CHAR(sysdate-1, 'yyyy/MM/dd')
+		WHERE uploadpath < TO_CHAR(sysdate -1 ,'yyyy/mm/dd')
 	]]>
 	</select>
 	
 	<select id="selectAttachFilesDuringBeforeOneDay" 
 			resultType="com.spring5.mypro00.domain.MyBoardAttachFileVO">
 	<![CDATA[
-		SELECT uuid, uploadPath, fileName, fileType, bno
+		SELECT uuid ,uploadpath ,filename ,filetype, bno
 		FROM book_ex.tbl_myattachFiles
-		WHERE uploadPath = TO_CHAR(sysdate- 0, 'yyyy/MM/dd')
+		WHERE uploadpath = TO_CHAR(sysdate - 1 ,'yyyy/mm/dd')
 	]]>
 	</select>
-	
-	
+
 
 </mapper>

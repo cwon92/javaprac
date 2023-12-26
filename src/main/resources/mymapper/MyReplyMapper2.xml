@@ -4,84 +4,81 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring5.mypro00.mapper.MyReplyMapper">
 
-<!--  특정 게시물에 대한 댓글 목록 조회: 페이징 고려 -->
-	<select id="selectMyReplyList" resultType="com.spring5.mypro00.domain.MyReplyVO"
-				parameterType="com.spring5.mypro00.common.paging.domain.MyReplyPegingDTO">
+<!-- 특정 게시물에 대한 댓글 목록 조회: 페이징 고려 -->
+	<select id="selectMyReplyList" 
+			resultType="com.spring5.mypro00.domain.MyReplyVO"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyReplyPagingDTO">
 	<![CDATA[
+		SELECT lvl, rno, rcontent,  rwriter, rRegDate, rModDate, bno, prno, rdelFlag
+		FROM ( 	SELECT /*+ INDEX(a IDX_BNO_RNO_REPLY)  */ ROWNUM rn, LEVEL lvl, a.*
+				FROM book_ex.tbl_myreply a
+				WHERE bno = #{bno}
+				AND ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
+				START WITH prno IS NULL
+				CONNECT BY PRIOR rno = prno
+			  )
+		WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1))  
 
-		SELECT lvl, rno, rcontent, rwriter, rRegDate, rModDate, bno, prno, rdelFlag
-		FROM ( SELECT /*+ INDEX (a IDX_BNO_RNO_REPLY) */ ROWNUM rn, LEVEL lvl , a.* 
-			   FROM book_ex.tbl_myreply a
-			   WHERE bno = #{bno}
-			   AND ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
-			   START WITH prno is null
-			   CONNECT BY PRIOR rno = prno
-		    )
-		WHERE rn >= ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1))
-		
-		]]>
+	]]>	
 	</select>
-	
+
 <!-- 특정 게시물에 대한 댓글 총 개수 -->
-	<select id="selectRowTotal" resultType="Long" parameterType="long">	
+	<select id="selectRowTotal" resultType="Long" parameterType="long">
 		SELECT COUNT(*) FROM book_ex.tbl_myreply
-		WHERE bno = #{bno}	
+		WHERE bno = #{bno}
 	</select>
 	
 <!-- 특정 게시물에 대한 댓글 등록 -->
 	<insert id="insertMyReplyForBoard" parameterType="com.spring5.mypro00.domain.MyReplyVO">
-			<selectKey keyProperty="rno" order="BEFORE" resultType="long">
-				SELECT book_ex.seq_myreply.NEXTVAL FROM dual
-			</selectKey>
+		<selectKey keyProperty="rno" order="BEFORE" resultType="long">
+			SELECT book_ex.seq_myreply.NEXTVAL FROM dual 
+		</selectKey>
 	
-		INSERT INTO book_ex.tbl_myreply
-		VALUES (#{rno}, #{rcontent},#{rwriter},DEFAULT,DEFAULT,#{bno},NULL,DEFAULT)
-        	
+	INSERT INTO book_ex.tbl_myreply
+	VALUES (#{rno},#{rcontent},#{rwriter},DEFAULT,DEFAULT,#{bno},NULL,DEFAULT)
+	
 	</insert>
-	
+
 <!-- 댓글에 대한 답글 등록(prno: 부모글의 rno 값) -->
 	<insert id="insertMyReplyForReply" parameterType="com.spring5.mypro00.domain.MyReplyVO">
 		<selectKey keyProperty="rno" order="BEFORE" resultType="long">
-			SELECT book_ex.seq_myreply.NEXTVAL FROM dual
+			SELECT book_ex.seq_myreply.NEXTVAL FROM dual 
 		</selectKey>
-
-		INSERT INTO book_ex.tbl_myreply
-		VALUES (#{rno}, #{rcontent},#{rwriter},DEFAULT,DEFAULT,#{bno},#{prno},DEFAULT)
+	
+	INSERT INTO book_ex.tbl_myreply
+	VALUES (#{rno},#{rcontent},#{rwriter},DEFAULT,DEFAULT,#{bno},#{prno},DEFAULT)
+	
 	</insert>
-
+	
 <!-- 특정 게시물에 대한 특정 댓글/답글 조회 -->
 	<select id="selectMyReply" resultType="com.spring5.mypro00.domain.MyReplyVO">
-		SELECT rno, rcontent, rwriter, rRegDate, rModDate, bno, prno, rdelFlag
+		SELECT rno, rcontent,  rwriter, rRegDate, rModDate, bno, prno, rdelFlag
 		FROM book_ex.tbl_myreply
 		WHERE bno = #{bno} AND rno = #{rno}
+	
 	</select>
 	
 <!-- 특정 게시물에 대한 특정 댓글/답글 수정 -->
 	<update id="updateMyReply" parameterType="com.spring5.mypro00.domain.MyReplyVO">
 		UPDATE book_ex.tbl_myreply
 		SET rcontent = #{rcontent} ,
-		    rmodDate = DEFAULT
+			rmodDate = DEFAULT
 		WHERE bno = #{bno} AND rno = #{rno}
 	</update>
-	
+
 <!-- 특정 게시물에 대한 특정 댓글/답글 삭제요청 -->
 	<update id="updateRdelFlag">
 		UPDATE book_ex.tbl_myreply
 		SET rdelFlag = 1,
-		    rmodDate = DEFAULT
+			rmodDate = DEFAULT
 		WHERE bno = #{bno} AND rno = #{rno}
-	
 	</update>
-	
+
+
 <!-- 특정 게시물에 대한 모든 댓글 삭제 -->
 	<delete id="deleteAllReply">
-	DELETE FROM book_ex.tbl_myreply
-	WHERE bno = #{bno} 
-	
+		DELETE FROM book_ex.tbl_myreply
+		WHERE bno = #{bno}
 	</delete>
 
-
 </mapper>
-
-
-
