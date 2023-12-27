@@ -3,6 +3,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 
@@ -89,13 +90,17 @@
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu">
+                      <sec:authorize access="isAnonymous()">
                         <li><a id="myLogin" href="${contextPath }/myLogin">
                         	<i class="fa fa-sign-in fa-fw"></i> Sign in</a>
                         </li>
-                        <li class="divider"></li>
+                      </sec:authorize>  
+                      <sec:authorize access="isAuthenticated()">
+                        <!-- <li class="divider"></li> -->
                         <li><a id="myLogout" href="${contextPath }/myLogout">
                         	<i class="fa fa-sign-out fa-fw"></i> Sign out</a>
                         </li>
+                      </sec:authorize>
                     </ul><!-- /.dropdown-user -->
                 </li><!-- /.dropdown -->
             </ul>
@@ -116,12 +121,18 @@
                         <li>
                             <a href="${contextPath }/myboard/detail?bno=1"><i class="fa fa-edit fa-fw"></i> 1번 게시물 조회</a>
                         </li>
-                        <li>
-                            <a href="${contextPath }/myLogin"><i class="fa fa-sign-in fa-fw"></i> Sign in</a>
-                        </li>
+                        
+                        <sec:authorize access="isAnonymous()">
+	                        <li>
+	                            <a href="${contextPath }/myLogin"><i class="fa fa-sign-in fa-fw"></i> Sign in</a>
+	                        </li>
+                        </sec:authorize>
+                        <sec:authorize access="isAuthenticated()">
                         <li>
                             <a href="${contextPath }/myLogout"><i class="fa fa-sign-out fa-fw"></i> Sign out</a>
                         </li>
+                        </sec:authorize>
+                        
                     </ul>
                 </div><!-- /.sidebar-collapse -->
             </div><!-- /.navbar-static-side -->

@@ -116,6 +116,6 @@ public class MyMemberMapperTests {
 //        
 //        member.getAuthorityList().forEach(authority -> log.info(authority));
 //    }
-
+//
 } //class-end
 

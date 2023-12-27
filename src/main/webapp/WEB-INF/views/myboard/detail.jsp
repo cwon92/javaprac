@@ -303,8 +303,10 @@ $("#btnToModify").on("click", function(){
 --%>
 
 	var bno = '<c:out value="${myboard.bno}"/>' ;
+	var bwriter = '<c:out value="${myboard.bwriter}"/>';
 	
 	frmSendValue.append("<input type='hidden' name='bno' value='" + bno + "'/>") ;
+	frmSendValue.append("<input type='hidden' name='bwriter' value='" + bwriter + "'/>") ;
 	frmSendValue.attr("action", "${contextPath}/myboard/modify").attr("method", "get") ;
 	frmSendValue.submit() ;
 });

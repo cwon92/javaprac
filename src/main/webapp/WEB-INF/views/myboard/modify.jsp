@@ -3,7 +3,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 
 <%@include file="../myinclude/myheader.jsp" %>  
@@ -55,9 +55,13 @@
 	      	   value='<fmt:formatDate pattern="yyyy/MM/dd HH:mm:ss" value="${myboard.bmodDate }"/>' 
 	      	   disabled="disabled">
 	</div>
-	
-	<button type="button" class="btn btn-primary mybtns" id="btnModify" data-oper="modify">수정</button>
-	<button type="button" class="btn btn-primary mybtns" id="btnRemove" data-oper="remove">삭제</button>
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal.username" var="username"/><!-- 변수명 달라도 돌아가는데 같아야 오류가 안남 -->
+			<c:if test="${username == myboard.bwriter }">
+				<button type="button" class="btn btn-primary mybtns" id="btnModify" data-oper="modify">수정</button>
+				<button type="button" class="btn btn-primary mybtns" id="btnRemove" data-oper="remove">삭제</button>
+			</c:if>	
+	</sec:authorize>
 	<button type="button" class="btn btn-warning mybtns" id="btnList" data-oper="list">취소</button>
  	
  	<input type="hidden" id="pageNum" name="pageNum" value="${myBoardPagingDTO.pageNum }" >
@@ -78,11 +82,17 @@
 
 </div><%-- /#page-wrapper --%>
 
-<%-- 첨부파일 결과 표시 --%>    
+<%-- 첨부파일 결과 표시 --%> 
+ 
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">파일첨부</div><!-- /.panel-heading -->
+            	<sec:authorize access="isAuthenticated()">
+					<sec:authentication property="principal.username" var="username"/> 
+					<c:if test="${username == myboard.bwriter }"> 
+                		<div class="panel-heading">파일첨부</div><!-- /.panel-heading -->
+                	</c:if>
+                </sec:authorize>
                 <div class="panel-body">
                     <div class="form-group uploadDiv">
                         <input id="inputFile" class="btn btn-primary inputFile" type="file" name="uploadFiles" multiple="multiple" /><br>
@@ -100,7 +110,18 @@
 
 <script>
 
+var myCsrfHeaderName = "${_csrf.headerName}" ;
+var myCsrfToken = "${_csrf.token}" ;
 
+/* $(document).ajaxSend(function(e, xhr){
+   xhr.setRequestHeader(myCsrfHeaderName, myCsrfToken) ;
+      
+}); 은 위에 한 번쓰면 모든 ajax처리 전에 적용이 자동으로 되는데
+
+beforeSend: function(xhr){
+			xhr.setRequestHeader(myCsrfHeaderName, myCsrfToken);
+		}
+를 두 개이상 쓸바에야 위에놈 쓰는게 나음*/
 
 <%--
 //var frmModify = document.getElementById("frmModify") ;
@@ -124,9 +145,12 @@ $("#btnList").on("click", function(){
 });
 --%>
 
-
-
 var frmModify = $("#frmModify") ;
+var loginUser = "";
+
+<sec:authorize access="isAuthenticated()">
+	loginUser = '<sec:authentication property="principal.username" />';
+</sec:authorize>
 
 <%--수정된 게시물 입력값 유무 확인 함수--%>
 function checkBoardValues(){
@@ -152,7 +176,15 @@ $(".mybtns").on("click", function(){
 	var operation = $(this).data("oper") ;
 	//alert("operation: " + operation) ;
 	
+	var bwriter = '<c:out value="${myboard.bwriter}"/>';
+	
 	if (operation == "modify") {
+		
+		if(!loginUser || bwriter != loginUser){
+			return ;
+		}
+		
+	
 		
 		var emptyLi = $(".fileUploadResult ul li") ;
 //		console.log(emptyLi)  ;
@@ -193,6 +225,10 @@ $(".mybtns").on("click", function(){
 	
 	} else if (operation == "remove"){
 		
+		if(!loginUser || bwriter != loginUser){
+			return ;
+		}
+	
 		frmModify.attr("action", "${contextPath}/myboard/remove") ;
 	
 	} else {  //else if (operation == "list"){
@@ -234,6 +270,9 @@ function getAttachFileInfo(){
 		url: "${contextPath}/myboard/getFiles" ,
 		data: {bno: bno} ,
 		dataType: "json" ,
+		beforeSend: function(xhr){
+			xhr.setRequestHeader(myCsrfHeaderName, myCsrfToken);
+		},
 		success: function(uploadResult){
 			showUploadResult(uploadResult) ;
 		}
@@ -273,7 +312,7 @@ function showUploadResult(uploadResult) {
 				+ "        <img src='${contextPath}/resources/img/icon-attach.png' style='width:25px;'>"
 				+ "        &nbsp;&nbsp;" + attachFile.fileName 
 	//			+ "    </a>"
-				+  "  <button type='button' class='btn btn-danger btn-xs' data-filename='" + fullFileName + "' data-filetype='F'>X</button>"
+				+ "  <button type='button' class='btn btn-danger btn-xs' data-filename='" + fullFileName + "' data-filetype='F'>X</button>"
 				+ "</li>" ;
 				
 			} else { //else if(attachFile.fileType == "I") {
@@ -289,13 +328,19 @@ function showUploadResult(uploadResult) {
 				+ "    data-uuid='" + attachFile.uuid + "'" 
 				+ "    data-filename='" + attachFile.fileName + "'" 
 				+ "    data-filetype='I'>"
-	//			+ "    <a href='${contextPath}/fileDownloadAjax?fileName=" + fullFileName +"'>" //다운로드
-	//			+ "    <a href=\"javascript:showImage('" + fullFileName + "')\">"
 				+ "        <img src='${contextPath}/displayThumbnail?fileName=" + thumbnail + "'>"
-				+ "        &nbsp;&nbsp;" + attachFile.fileName 
-	//			+ "    </a>"
-				+  "  <button type='button' class='btn btn-danger btn-xs' data-filename='" + thumbnail + "' data-filetype='I'>X</button>"
-				+ "</li>" ;
+				+ "        &nbsp;&nbsp;" + attachFile.fileName ;
+				
+				<sec:authorize access="isAuthenticated()">
+					<sec:authentication property="principal.username" var="username"/>
+						<c:if test="${username == myboard.bwriter }">
+				htmlStr
+				+=" 	 <button type='button' class='btn btn-danger btn-xs' data-filename='" + thumbnail + "' data-filetype='I'>X</button>";
+						</c:if>
+					</sec:authorize>
+					
+				htmlStr
+				+="</li>" ;
 			}
 				
 		}); <%--foreach-end--%>
@@ -373,6 +418,9 @@ $("#inputFile").on("change", function(){
 		contentType: false , <%--contentType에 MIME 타입을 지정하지 않음.--%>
 		processData: false , <%--contentType에 설정된 형식으로 data를 처리하지 않음. --%>
 		dataType: "json" ,
+		beforeSend: function(xhr){
+			xhr.setRequestHeader(myCsrfHeaderName, myCsrfToken);
+		},
 		success: function(uploadResult, status){
 			
 <%--		//복사된 file-input을 삽입하는 경우, 첨부파일 삭제/추가 시에는, 초기화 되지 않음.

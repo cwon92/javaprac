@@ -131,8 +131,8 @@ public class MyBoardController {
 	
 	//특정 게시물 수정삭제 페이지 호출
 	@GetMapping("/modify")
-	@PreAuthorize("isAuthenticated() && principal.username == #myboard.bwriter")
-	public String showBoardModify(Long bno, Model model, 
+//	@PreAuthorize("isAuthenticated() && principal.username == #bwriter")//컨트롤러에만 가능
+	public String showBoardModify(Long bno, Model model, String bwriter, 
 								  MyBoardPagingDTO myboardPaging) {
 		MyBoardVO myboard = myBoardService.getBoard2(bno) ;
 		
