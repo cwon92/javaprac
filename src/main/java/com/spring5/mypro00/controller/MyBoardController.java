@@ -100,8 +100,6 @@ public class MyBoardController {
 		
 		long bno = myBoardService.registerBoard(myboard) ;
 		
-		//return "redirect:/myboard/list?bno=" + bno ;
-		
 		redirectAttr.addFlashAttribute("result", bno) ;
 		System.out.println("result: " + redirectAttr.getFlashAttributes());
 		

@@ -171,7 +171,7 @@ function checkUploadFile(fileName, fileSize) {
 	
 	return true ;
 }
-
+/* 파일 업로드 보여주기 */
 function showUploadResult(uploadResult) {
 	
 	if(!uploadResult || uploadResult.length == 0) {
